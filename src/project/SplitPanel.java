@@ -3,9 +3,9 @@ package project;
 import java.awt.*;
 import javax.swing.*;
 
-public class SplitPane {
+public class SplitPanel {
 	JSplitPane split = new JSplitPane( JSplitPane.VERTICAL_SPLIT );
-	public SplitPane() {
+	public SplitPanel() {
         split.setDividerLocation( 200 );
         JPanel panel1 = new JPanel();
         panel1.setBackground(Color.BLUE);
@@ -13,13 +13,13 @@ public class SplitPane {
         panel1.add( new JLabel( "CENTER panel" ), BorderLayout.CENTER );
 
 		JTextArea myDrawPanel = new JTextArea();
-        myDrawPanel.setPreferredSize( new Dimension( 200, 200 ) );
+        myDrawPanel.setPreferredSize( new Dimension( 350, 350 ) );
         myDrawPanel.add( new JLabel( "WEST panel!" ) );
         panel1.add( new JScrollPane( myDrawPanel ), BorderLayout.WEST );
 
         JPanel panel3 = new JPanel();
         panel3.setBackground(Color.GREEN); 
-        panel3.setPreferredSize( new Dimension( 200, 200 ) );
+        panel3.setPreferredSize( new Dimension( 350, 350 ) );
     	GridLayout gridAttPane = new GridLayout(7,2,0,30);
     	panel3.add( new JLabel( "EAST Panel!" ) );
     	panel3.add( new JLabel( "" ) );

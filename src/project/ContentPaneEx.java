@@ -17,7 +17,7 @@ public class ContentPaneEx extends JFrame{
         this.add(new ToolBar().toolBar_create(), BorderLayout.NORTH);	//toolbar 생성
         this.setLocationRelativeTo(null);	//toolbar()에 같이 있던 코드인데 뭐하는거지?
         
-        SplitPane split = new SplitPane();
+        SplitPanel split = new SplitPanel();
         this.add(split.splitpane_create());
         
 		this.setBackground(Color.darkGray);
