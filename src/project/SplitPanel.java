@@ -8,7 +8,7 @@ public class SplitPanel {
 	public SplitPanel() {
         split.setDividerLocation( 200 );
         JPanel panel1 = new JPanel();
-        panel1.setBackground(Color.BLUE);
+        panel1.setBackground(new Color(163, 202, 241));
         panel1.setLayout( new BorderLayout() );
         panel1.add( new JLabel( "CENTER panel" ), BorderLayout.CENTER );
 
@@ -18,7 +18,7 @@ public class SplitPanel {
         panel1.add( new JScrollPane( myDrawPanel ), BorderLayout.WEST );
 
         JPanel panel3 = new JPanel();
-        panel3.setBackground(Color.GREEN); 
+        panel3.setBackground(new Color(174, 246, 160)); 
         panel3.setPreferredSize( new Dimension( 350, 350 ) );
     	GridLayout gridAttPane = new GridLayout(7,2,0,30);
     	panel3.add( new JLabel( "EAST Panel!" ) );
