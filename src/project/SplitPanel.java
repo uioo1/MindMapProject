@@ -15,13 +15,6 @@ public class SplitPanel {
         panel1.add( new JLabel( "CENTER panel" ), BorderLayout.CENTER );
 
         /////////////////왼쪽 텍스트 패널
-<<<<<<< HEAD
-		JTextArea myDrawPanel = new JTextArea();
-        myDrawPanel.setPreferredSize( new Dimension( 350, 350 ) );
-        myDrawPanel.add( new JLabel( "WEST panel!" ) );
-        panel1.add( new JScrollPane( myDrawPanel ), BorderLayout.WEST );
-
-=======
         JPanel panel2_1 = new JPanel();
         
         JButton textbutton = new JButton("적용");
@@ -32,7 +25,6 @@ public class SplitPanel {
 		panel2_1.add( textbutton, BorderLayout.SOUTH );
 		panel1.add(panel2_1, BorderLayout.WEST);
 		
->>>>>>> 93a7db54875e28990ba0e218e19a0052bae9127b
         ////////////////오른쪽 설정 패널
         JPanel panel3 = new JPanel();
         panel3.setBackground(new Color(174, 246, 160)); 
