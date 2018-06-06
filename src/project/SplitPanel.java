@@ -7,16 +7,20 @@ public class SplitPanel {
 	JSplitPane split = new JSplitPane( JSplitPane.VERTICAL_SPLIT );
 	public SplitPanel() {
         split.setDividerLocation( 200 );
+        
+        /////////////////가운데 마인드맵 패널
         JPanel panel1 = new JPanel();
         panel1.setBackground(new Color(163, 202, 241));
         panel1.setLayout( new BorderLayout() );
         panel1.add( new JLabel( "CENTER panel" ), BorderLayout.CENTER );
 
+        /////////////////왼쪽 텍스트 패널
 		JTextArea myDrawPanel = new JTextArea();
         myDrawPanel.setPreferredSize( new Dimension( 350, 350 ) );
         myDrawPanel.add( new JLabel( "WEST panel!" ) );
         panel1.add( new JScrollPane( myDrawPanel ), BorderLayout.WEST );
 
+        ////////////////오른쪽 설정 패널
         JPanel panel3 = new JPanel();
         panel3.setBackground(new Color(174, 246, 160)); 
         panel3.setPreferredSize( new Dimension( 350, 350 ) );
