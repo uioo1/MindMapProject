@@ -35,7 +35,8 @@ public class SplitPanel {
 		
 		ActionListener TextPanelActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Tree().getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
+				Tree myTree = new Tree();
+				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
 			}
 		};
 	    textbutton.addActionListener(TextPanelActionListener);	//Action 리스너 달기

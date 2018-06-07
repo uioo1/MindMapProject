@@ -1,20 +1,20 @@
 package project;
 
 public class Node {
-	private String data;
+	private String node_data;
     private Node leftChild;
     private Node rightSibling;
  
-    public Node(String data) {
-        this.data = data;
+    public Node(String node_data) {
+        this.node_data = node_data;
     }
  
-    public void setData(String data) {
-        this.data = data;
+    public void setData(String node_data) {
+        this.node_data = node_data;
     }
  
-    public String getData() {
-        return data;
+    public String getNodeData() {
+        return node_data;
     }
  
     public void setLeftChild(Node leftChild) {

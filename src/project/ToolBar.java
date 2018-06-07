@@ -32,7 +32,7 @@ public class ToolBar {
 	     tool.add(new JButton("º¯°æ"));
 	     tool.addSeparator();
 	     // tool.add(new JTextField("text field"));
-	     JComboBox combo=new JComboBox();
+	     JComboBox<String> combo = new JComboBox<String>();
 	     combo.addItem("click");
 	     combo.addItem("¤Ç");
 	     combo.addItem("¤Ç¤Ç");
