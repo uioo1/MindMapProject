@@ -24,8 +24,20 @@ public class SplitPanel {
         /////////////////가운데 마인드맵 패널
         panel_Mid = new JPanel();
         panel_Mid.setBackground(new Color(163, 202, 241));
-        panel_Mid.setLayout( new BorderLayout() );
+        panel_Mid.setLayout(null);
         split2.setBackground(new Color(100, 100, 100));
+        
+        /////////////////////////가운데 판넬에 넣는것 실험중인 코드
+        /*
+        for(int i = 0; i < 10 ; i++) {
+			JTextField label = new JTextField(Integer.toString(i));
+			label.setSize(20, 10);
+			label.setLocation(i*15, i*15);
+			label.setSize(10,10);
+			label.setBackground(new Color(100, 100, 100));
+			panel_Mid.add(label);
+        }
+        */
         
         /////////////////왼쪽 텍스트 패널+ 다 담는 패널
         panel_Left_Background = new JPanel();
@@ -67,16 +79,19 @@ public class SplitPanel {
 		panel_Right.add(new JLabel(" COLOR: "));
 		panel_Right.add(new JTextField(""));
 		
+		
 		//틀에 스플릿 추가
 		split.setLeftComponent(panel_Left_Background);
 		split.setRightComponent(split2);
 		//스플릿 하나위에 미드와 라이트 추가
 		split2.setLeftComponent(panel_Mid);		
 		split2.setRightComponent(panel_Right);
+		
+		
 	}
 	
 	public JSplitPane splitpane_create() {        
         return split;
 	}
-		
+
 }
