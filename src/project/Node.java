@@ -2,6 +2,7 @@ package project;
 
 public class Node {
 	private String node_data;
+	private Node parent;
     private Node leftChild;
     private Node rightSibling;
  
@@ -16,10 +17,18 @@ public class Node {
     public String getNodeData() {
         return node_data;
     }
+    
+    public void setParent(Node parent) {
+    	this.parent = parent;
+    }
+    
+    public Node getParent() {
+    	return parent;
+    }       
  
     public void setLeftChild(Node leftChild) {
         this.leftChild = leftChild;
-    }
+    }  
  
     public Node getLeftChild() {
         return leftChild;

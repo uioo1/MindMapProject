@@ -28,18 +28,18 @@ public class SplitPanel {
         split2.setBackground(new Color(100, 100, 100));
         
         /////////////////////////가운데 판넬에 넣는것 실험중인 코드
-        /*
-        for(int i = 0; i < 10 ; i++) {
-			JTextField label = new JTextField(Integer.toString(i));
+        
+        /*for(int i = 0; i < 10 ; i++) {
+			JLabel label = new JLabel(Integer.toString(i));
 			label.setSize(20, 10);
 			label.setLocation(i*15, i*15);
 			label.setSize(10,10);
 			label.setBackground(new Color(100, 100, 100));
 			panel_Mid.add(label);
-        }
-        */
+        }*/
         
-        /////////////////왼쪽 텍스트 패널+ 다 담는 패널
+        
+        /////////////////왼쪽 텍스트 패널+다 담는 패널
         panel_Left_Background = new JPanel();
         myDrawPanel = new JTextArea(30,25);
         JButton textbutton = new JButton("적용");       
@@ -53,10 +53,13 @@ public class SplitPanel {
 			public void actionPerformed(ActionEvent e) {
 				Tree myTree = new Tree();
 				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
+				System.out.println(myTree.root.getNodeData());
+				Draw_Tree(myTree.root, 0);
+				panel_Mid.repaint();
 			}
 		};
 	    textbutton.addActionListener(TextPanelActionListener);	//Action 리스너 달기
-	 
+
 				
         ////////////////오른쪽 설정 패널
         panel_Right = new JPanel();
@@ -93,6 +96,22 @@ public class SplitPanel {
 	
 	public JSplitPane splitpane_create() {        
         return split;
+	}
+	
+	public void Draw_Tree(Node root, int i) {
+		JLabel label = new JLabel(root.getNodeData());
+		label.setSize(60, 60);
+		label.setLocation(i*60, i*60);
+		label.setBackground(new Color(100, 100, 100));
+		panel_Mid.add(label);
+       
+		// 자식 노드가 존재한다면
+	    	if(root.getLeftChild() != null)
+	    		Draw_Tree(root.getLeftChild(), i + 1);
+	         
+	    // 형제 노드가 존재한다면
+	    	if(root.getRightSibling() != null)
+	    		Draw_Tree(root.getRightSibling(), i + 1);
 	}
 
 }

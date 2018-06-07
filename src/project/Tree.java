@@ -37,7 +37,7 @@ public class Tree {
     // 모두 출력
     public void printTree(Node node, int depth) {
         for(int i = 0; i < depth; i++)
-            System.out.print(" ");
+            System.out.print("	");
          
         // 데이터 출력
         System.out.println(node.getNodeData());
@@ -60,24 +60,38 @@ public class Tree {
 		for(int i = 0; i < nodes.length; i++) {
 			now_tab_count = getCharCount(nodes[i], '\t');
 			now_node = new Node(nodes[i].replaceAll("\t", ""));	//탭문자 제거해주기
-			//System.out.print(now_tab_count + " ");
-			
+						
 			if(i == 0 && now_tab_count == 0) {
 				root = now_node;
 				before_node = now_node;
 				before_tab_count = now_tab_count;
 			}
 			else if(i != 0 && now_tab_count > before_tab_count) {
-				before_node.setRightSibling(now_node);
-				//add(before_node, now_node);
+				before_node.setLeftChild(now_node);
+				now_node.setParent(before_node);
+				before_node = now_node;
+				before_tab_count = now_tab_count;
 			}
 			else if(i != 0 && now_tab_count == before_tab_count) {
 				before_node.setRightSibling(now_node);
-			}			
+				now_node.setParent(before_node.getParent());
+				before_node = now_node;
+				before_tab_count = now_tab_count;
+			}	
+			else if(i != 0 && now_tab_count < before_tab_count) {
+				int gap = before_tab_count - now_tab_count;
+				
+				for(int j = gap; j > 0; j--) {
+					before_node = before_node.getParent();
+				}
+				before_node.setRightSibling(now_node);
+				now_node.setParent(before_node.getParent());
+				before_node = now_node;
+				before_tab_count = now_tab_count;
+			}	
 			
 		}
 		printTree(root, 0);
-		System.out.println();
 	}
 	
 }
