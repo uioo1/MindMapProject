@@ -3,7 +3,7 @@ package project;
 public class Tree {
 	Node root;
 	Node before_node;
-	int before_tab_count;
+	int before_tab_count, node_count = 0;
 	
 	public Tree() {
 		
@@ -17,6 +17,10 @@ public class Tree {
         }
         return count;
     }
+	
+	public int getNodeCount() {
+		return node_count;
+	}
 	
 	 // 부모 노드에 자식 노드 추가
     public void add(Node parent, Node child) {
@@ -55,7 +59,8 @@ public class Tree {
 		Node now_node;
 		int now_tab_count = 0;
 		String nodes[];		
-		nodes = text.split("\\r?\\n");	//엔터로 글자 쪼개기		
+		nodes = text.split("\\r?\\n");	//엔터로 글자 쪼개기
+		node_count = nodes.length;
 			
 		for(int i = 0; i < nodes.length; i++) {
 			now_tab_count = getCharCount(nodes[i], '\t');

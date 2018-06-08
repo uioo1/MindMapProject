@@ -5,8 +5,8 @@ import javax.swing.JLabel;
 
 public class Node {
 	private String node_data;
-	private JLabel myLabel;
-	private int node_x, node_y, node_wid, node_hei;
+	public JLabel myLabel;
+	private int index, node_x, node_y, node_wid, node_hei;
 	private Color node_color;
 	private Node parent;
     private Node leftChild;
@@ -31,6 +31,14 @@ public class Node {
     public JLabel getmyLabel() {
     	return myLabel;
     }    
+    
+    public void setIndex(int index) {
+    	this.index = index;
+    }
+    
+    public int getIndex() {
+    	return index;
+    }
     
     public void setNodex(int node_x) {
     	this.node_x = node_x;
@@ -64,7 +72,7 @@ public class Node {
     	return node_hei;
     }
     
-    public void setnodeColor(Color node_color) {
+    public void setNodeColor(Color node_color) {
     	this.node_color = node_color;
     }
     

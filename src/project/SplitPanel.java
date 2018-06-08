@@ -1,6 +1,8 @@
 package project;
 
 import java.awt.*;
+import java.awt.List;
+import java.util.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -14,6 +16,12 @@ import javax.swing.border.LineBorder;
 public class SplitPanel {
 	JPanel panel_Mid;	//가운데 마인드맵패널 정의
 	JPanel panel_Left_Background;	//textarea 와 적용butoon을 가지고있는 패널
+	JPanel panel_Right;	//오른쪽 속성 패널 정의
+	JPanel panel_Background;
+	//JLabel jLabel_nodes[] = new JLabel[100];	//JLabel이랑 Node랑 이어주는거
+	ArrayList<JLabel> jLabel_nodes = new ArrayList<JLabel>();
+	//Node node_for_Labels[] = new Node[100];
+	ArrayList<Node> node_for_Labels = new ArrayList<Node>();
 	JTextArea myDrawPanel;	//textarea 정의
 	JTextField node_textfield = new JTextField();
 	JTextField node_xfield = new JTextField();
@@ -21,8 +29,7 @@ public class SplitPanel {
 	JTextField node_widfield = new JTextField();
 	JTextField node_heifield = new JTextField();
 	JTextField node_colorfield = new JTextField();
-	JPanel panel_Right;	//오른쪽 속성 패널 정의
-	JPanel panel_Background;
+
 	JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	JSplitPane split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	Tree myTree = new Tree();
@@ -53,6 +60,7 @@ public class SplitPanel {
 		ActionListener TextPanelActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
+				make_JLabelArray(myTree.node_count);
 				draw_Tree(myTree.root, 0, panel_Mid);
 				panel_Mid.repaint();
 			}
@@ -108,12 +116,18 @@ public class SplitPanel {
         return split;
 	}
 	
+	public void make_JLabelArray(int node_count) {
+		/*for(int i = 0; i < node_count; i++) {
+			jLabel_nodes[i] = new JLabel();
+			node_for_Labels[i] = new Node("");
+		}*/	
+	}
+	
 	public void draw_Tree(Node root, int i, JPanel mid_panel) {
 		JLabel label = new JLabel(root.getNodeData());
 		int check = 0, node_x = i*60, node_y = i*60, node_wid = 60, node_hei = 40;
 		Node check_node = root;
-		NodeMouseListener nodeMouse = new NodeMouseListener(label, mid_panel);
-		label.addMouseListener(nodeMouse);
+		
 		label.setSize(node_wid, node_hei);
 		label.setOpaque(true);
 	
@@ -123,18 +137,24 @@ public class SplitPanel {
 		random_b = (int)(Math.random() * 256);
 		Color random_color = new Color(random_r, random_g, random_b);
 		label.setBackground(random_color);
-		root.setnodeColor(random_color);
+		root.setNodeColor(random_color);
 
 		label.setBorder(new LineBorder(new Color(82, 130, 184), 2));
 		label.setLocation(node_x, node_y);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		panel_Mid.add(label);
+		panel_Mid.add(label);	//Label 마인드맵에 추가
+		jLabel_nodes.add(label);	
+		node_for_Labels.add(root);
 		root.setmyLabel(label);
+		root.setIndex(i);
 		root.setNodex(node_x);
 		root.setNodey(node_y);
 		root.setNodewid(node_wid);
 		root.setNodehei(node_hei);
+		
+		NodeMouseListener nodeMouse = new NodeMouseListener(label, mid_panel);
+		label.addMouseListener(nodeMouse);
        
 		// 자식 노드가 존재한다면
 	    if(root.getLeftChild() != null)
@@ -150,11 +170,15 @@ public class SplitPanel {
 	class NodeMouseListener implements MouseListener, MouseMotionListener {
 		JLabel label;
 		JPanel mid_panel;
+		Node myNode;
 		int before_x, before_y;
 		 
 		public NodeMouseListener(JLabel label, JPanel panel) {
 			this.label = label;
 			mid_panel = panel;
+			int i = jLabel_nodes.indexOf(label);
+			System.out.println("i = "+ i);
+			myNode = node_for_Labels.get(i);
 		}
 		 
 		public void mouseDragged(MouseEvent e) {
@@ -178,14 +202,23 @@ public class SplitPanel {
 		public void mousePressed(MouseEvent e) {
 			before_x = e.getX();
 			before_y = e.getY();
-			
+			node_textfield.setText(myNode.getNodeData());
+			node_xfield.setText(Integer.toString(myNode.getNodex()));
+			node_yfield.setText(Integer.toString(myNode.getNodey()));
+			node_widfield.setText(Integer.toString(myNode.getNodewid()));
+			node_heifield.setText(Integer.toString(myNode.getNodehei()));
+			node_colorfield.setText("0x" + Integer.toString(myNode.getNodecolor().getRed()) + 
+					Integer.toString(myNode.getNodecolor().getGreen()) + 
+					Integer.toString(myNode.getNodecolor().getBlue()));
 		}
 
 		public void mouseReleased(MouseEvent e) {
 			int now_x = e.getX();
 			int now_y = e.getY();
 			int label_x = label.getX();
+			myNode.setNodex(label_x);
 			int label_y = label.getY();
+			myNode.setNodey(label_y);
 			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
 			mid_panel.repaint();
 		}
