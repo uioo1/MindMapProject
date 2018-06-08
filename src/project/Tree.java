@@ -63,6 +63,7 @@ public class Tree {
 						
 			if(i == 0 && now_tab_count == 0) {
 				root = now_node;
+				root.setParent(null);
 				before_node = now_node;
 				before_tab_count = now_tab_count;
 			}

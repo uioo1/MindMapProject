@@ -27,22 +27,13 @@ public class SplitPanel {
 	public SplitPanel() {
         split.setDividerLocation( 300 );
         split2.setDividerLocation( 800 );
+        
         /////////////////가운데 마인드맵 패널
+        
         panel_Mid = new JPanel();
         panel_Mid.setBackground(new Color(163, 202, 241));
         panel_Mid.setLayout(null);
         split2.setBackground(new Color(100, 100, 100));
-        
-        /////////////////////////가운데 판넬에 넣는것 실험중인 코드
-        
-        /*for(int i = 0; i < 10 ; i++) {
-			JLabel label = new JLabel(Integer.toString(i));
-			label.setSize(20, 10);
-			label.setLocation(i*15, i*15);
-			label.setSize(10,10);
-			label.setBackground(new Color(100, 100, 100));
-			panel_Mid.add(label);
-        }*/
         
         
         /////////////////왼쪽 텍스트 패널+다 담는 패널
@@ -72,21 +63,27 @@ public class SplitPanel {
         panel_Right.setPreferredSize( new Dimension( 350, 350 ) );
         panel_Right.setSize(200,600);
     	GridLayout gridAttPane = new GridLayout(7,2,0,30);
-    	panel_Right.add( new JLabel( "EAST Panel!" ) );
-    	panel_Right.add( new JLabel( "" ) );
+    	JLabel attribute_label = new JLabel("속성");    	
+    	attribute_label.setOpaque(true);
+    	attribute_label.setHorizontalAlignment(SwingConstants.CENTER);
+    	attribute_label.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_Right.add(attribute_label);
+    	panel_Right.add(new JLabel(""));
+		panel_Right.add(new JLabel("  TEXT : "));
+		JTextField notWriteable = new JTextField();
+		notWriteable.setEditable(false);
+		panel_Right.add(notWriteable);
+		panel_Right.add(new JLabel("  X : "));
+		panel_Right.add(new JTextField(""));
+		panel_Right.add(new JLabel("  Y : "));
+		panel_Right.add(new JTextField(""));
+		panel_Right.add(new JLabel("  W : "));
+		panel_Right.add(new JTextField(""));
+		panel_Right.add(new JLabel("  H : "));
+		panel_Right.add(new JTextField(""));
+		panel_Right.add(new JLabel("  COLOR : "));
+		panel_Right.add(new JTextField(""));
 		panel_Right.setLayout(gridAttPane);
-		panel_Right.add(new JLabel(" TEXT: "));
-		panel_Right.add(new JTextField(""));
-		panel_Right.add(new JLabel(" X: "));
-		panel_Right.add(new JTextField(""));
-		panel_Right.add(new JLabel(" Y: "));
-		panel_Right.add(new JTextField(""));
-		panel_Right.add(new JLabel(" W: "));
-		panel_Right.add(new JTextField(""));
-		panel_Right.add(new JLabel(" H: "));
-		panel_Right.add(new JTextField(""));
-		panel_Right.add(new JLabel(" COLOR: "));
-		panel_Right.add(new JTextField(""));
 		
 		
 		//틀에 스플릿 추가
@@ -105,14 +102,46 @@ public class SplitPanel {
 	
 	public void draw_Tree(Node root, int i, JPanel mid_panel) {
 		JLabel label = new JLabel(root.getNodeData());
+		int check = 0;
+		Node check_node = root;
 		NodeMouseListener nodeMouse = new NodeMouseListener(label, mid_panel);
 		label.addMouseListener(nodeMouse);
 		label.setSize(60, 40);
 		label.setOpaque(true);
-		label.setBorder(new LineBorder(new Color(82, 130, 184), 3, true));
+		
+		while(true) {
+			if(check_node.getParent() != null) {
+				check_node = check_node.getParent();
+				check++;
+			}
+			else
+				break;
+		}
+		
+		switch(check) {
+			case 0 : 
+				label.setBackground(new Color(240, 90, 90));
+				break;
+			case 1 :				
+				label.setBackground(new Color(239, 187, 77));
+				break;
+			case 2 :				
+				label.setBackground(new Color(233, 232, 118));
+				break;
+			case 3 :				
+				label.setBackground(new Color(73, 208, 55));
+				break;
+			case 4 :				
+				label.setBackground(new Color(62, 96, 185));
+				break;
+			case 5 :				
+				label.setBackground(new Color(204, 70, 216));
+				break;
+		}
+
+		label.setBorder(new LineBorder(new Color(82, 130, 184), 2));
 		label.setLocation(i*60, i*60);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
-		label.setBackground(new Color(239, 187, 77));
 		
 		panel_Mid.add(label);
        
@@ -130,6 +159,7 @@ public class SplitPanel {
 	 class NodeMouseListener implements MouseListener, MouseMotionListener {
 		 JLabel label;
 		 JPanel mid_panel;
+		 int before_x, before_y;
 		 
 		 public NodeMouseListener(JLabel label, JPanel panel) {
 			 this.label = label;
@@ -138,14 +168,12 @@ public class SplitPanel {
 		 }
 		 
 		 public void mouseDragged(MouseEvent e) {
-			 int x = e.getX();
-			 int y = e.getY();
-			 System.out.println("x: "+ x + " y: " + y);
-			 label.setLocation(x, y);
-			 mid_panel.repaint();
 		 }
 
 		public void mouseMoved(MouseEvent e) {
+			int now_x = e.getX();
+			int now_y = e.getY();
+			System.out.println("마우스 무빙 x: "+ now_x + " y: " + now_y);
 		}
 
 		public void mouseClicked(MouseEvent e) {
@@ -158,16 +186,19 @@ public class SplitPanel {
 		}
 
 		public void mousePressed(MouseEvent e) {
+			before_x = e.getX();
+			before_y = e.getY();
 		}
 
 		public void mouseReleased(MouseEvent e) {
-			 int x = e.getX();
-			 int y = e.getY();
-			 int label_x = label.getX();
-			 int label_y = label.getY();
-			 System.out.println("마우스 뗌 x: "+ x + " y: " + y);
-			 label.setLocation(label_x + x - label.getWidth()/2, label_y + y - label.getHeight()/2);
-			 mid_panel.repaint();
+			int now_x = e.getX();
+			int now_y = e.getY();
+			int label_x = label.getX();
+			int label_y = label.getY();
+			//System.out.println("마우스 뗌 x: "+ now_x + " y: " + now_y);
+			//label.setLocation(label_x + x - label.getWidth()/2, label_y + y - label.getHeight()/2);
+			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
+			mid_panel.repaint();
 		}
 	 }
 }
