@@ -56,7 +56,7 @@ public class SplitPanel {
 		};
 	    textbutton.addActionListener(TextPanelActionListener);	//Action 리스너 달기
 	 
-				
+			//ㅋㅋ	
         ////////////////오른쪽 설정 패널
         panel_Right = new JPanel();
         panel_Right.setBackground(new Color(174, 246, 160)); 
