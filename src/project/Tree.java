@@ -91,7 +91,7 @@ public class Tree {
 			}	
 			
 		}
-		printTree(root, 0);
+		//printTree(root, 0);
 	}
 	
 }

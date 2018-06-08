@@ -3,9 +3,15 @@ package project;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+
 import java.util.*;
 
 public class SplitPanel {
@@ -53,8 +59,7 @@ public class SplitPanel {
 			public void actionPerformed(ActionEvent e) {
 				Tree myTree = new Tree();
 				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
-				System.out.println(myTree.root.getNodeData());
-				Draw_Tree(myTree.root, 0);
+				draw_Tree(myTree.root, 0, panel_Mid);
 				panel_Mid.repaint();
 			}
 		};
@@ -98,20 +103,71 @@ public class SplitPanel {
         return split;
 	}
 	
-	public void Draw_Tree(Node root, int i) {
+	public void draw_Tree(Node root, int i, JPanel mid_panel) {
 		JLabel label = new JLabel(root.getNodeData());
-		label.setSize(60, 60);
+		NodeMouseListener nodeMouse = new NodeMouseListener(label, mid_panel);
+		label.addMouseListener(nodeMouse);
+		label.setSize(60, 40);
+		label.setOpaque(true);
+		label.setBorder(new LineBorder(new Color(82, 130, 184), 3, true));
 		label.setLocation(i*60, i*60);
-		label.setBackground(new Color(100, 100, 100));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setBackground(new Color(239, 187, 77));
+		
 		panel_Mid.add(label);
        
 		// 자식 노드가 존재한다면
-	    	if(root.getLeftChild() != null)
-	    		Draw_Tree(root.getLeftChild(), i + 1);
+	    if(root.getLeftChild() != null)
+	    	draw_Tree(root.getLeftChild(), i + 1, panel_Mid);
 	         
 	    // 형제 노드가 존재한다면
-	    	if(root.getRightSibling() != null)
-	    		Draw_Tree(root.getRightSibling(), i + 1);
+	    if(root.getRightSibling() != null)
+	    	draw_Tree(root.getRightSibling(), i + 1, panel_Mid);
+	    	
+	   panel_Mid.repaint();
 	}
+	
+	 class NodeMouseListener implements MouseListener, MouseMotionListener {
+		 JLabel label;
+		 JPanel mid_panel;
+		 
+		 public NodeMouseListener(JLabel label, JPanel panel) {
+			 this.label = label;
+			 mid_panel = panel;
+			 System.out.println("추가됐음");
+		 }
+		 
+		 public void mouseDragged(MouseEvent e) {
+			 int x = e.getX();
+			 int y = e.getY();
+			 System.out.println("x: "+ x + " y: " + y);
+			 label.setLocation(x, y);
+			 mid_panel.repaint();
+		 }
 
+		public void mouseMoved(MouseEvent e) {
+		}
+
+		public void mouseClicked(MouseEvent e) {
+		}
+
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		public void mouseExited(MouseEvent e) {
+		}
+
+		public void mousePressed(MouseEvent e) {
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			 int x = e.getX();
+			 int y = e.getY();
+			 int label_x = label.getX();
+			 int label_y = label.getY();
+			 System.out.println("마우스 뗌 x: "+ x + " y: " + y);
+			 label.setLocation(label_x + x - label.getWidth()/2, label_y + y - label.getHeight()/2);
+			 mid_panel.repaint();
+		}
+	 }
 }
