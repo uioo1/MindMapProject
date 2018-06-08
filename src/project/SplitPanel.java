@@ -3,25 +3,29 @@ package project;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.*;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-import java.util.*;
 
 public class SplitPanel {
 	JPanel panel_Mid;	//가운데 마인드맵패널 정의
 	JPanel panel_Left_Background;	//textarea 와 적용butoon을 가지고있는 패널
 	JTextArea myDrawPanel;	//textarea 정의
+	JTextField node_textfield = new JTextField();
+	JTextField node_xfield = new JTextField();
+	JTextField node_yfield = new JTextField();
+	JTextField node_widfield = new JTextField();
+	JTextField node_heifield = new JTextField();
+	JTextField node_colorfield = new JTextField();
 	JPanel panel_Right;	//오른쪽 속성 패널 정의
 	JPanel panel_Background;
 	JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	JSplitPane split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+	Tree myTree = new Tree();
 
 	
 	public SplitPanel() {
@@ -48,7 +52,6 @@ public class SplitPanel {
 		
 		ActionListener TextPanelActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Tree myTree = new Tree();
 				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
 				draw_Tree(myTree.root, 0, panel_Mid);
 				panel_Mid.repaint();
@@ -69,20 +72,25 @@ public class SplitPanel {
     	attribute_label.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_Right.add(attribute_label);
     	panel_Right.add(new JLabel(""));
-		panel_Right.add(new JLabel("  TEXT : "));
-		JTextField notWriteable = new JTextField();
-		notWriteable.setEditable(false);
-		panel_Right.add(notWriteable);
-		panel_Right.add(new JLabel("  X : "));
-		panel_Right.add(new JTextField(""));
-		panel_Right.add(new JLabel("  Y : "));
-		panel_Right.add(new JTextField(""));
-		panel_Right.add(new JLabel("  W : "));
-		panel_Right.add(new JTextField(""));
-		panel_Right.add(new JLabel("  H : "));
-		panel_Right.add(new JTextField(""));
-		panel_Right.add(new JLabel("  COLOR : "));
-		panel_Right.add(new JTextField(""));
+    	
+		panel_Right.add(new JLabel("  TEXT : "));		
+		node_textfield.setEditable(false);
+		panel_Right.add(node_textfield);
+		
+		panel_Right.add(new JLabel("  X : "));		
+		panel_Right.add(node_xfield);
+		
+		panel_Right.add(new JLabel("  Y : "));		
+		panel_Right.add(node_yfield);
+		
+		panel_Right.add(new JLabel("  W : "));		
+		panel_Right.add(node_widfield);
+		
+		panel_Right.add(new JLabel("  H : "));		
+		panel_Right.add(node_heifield);
+		
+		panel_Right.add(new JLabel("  COLOR : "));		
+		panel_Right.add(node_colorfield);
 		panel_Right.setLayout(gridAttPane);
 		
 		
@@ -102,48 +110,31 @@ public class SplitPanel {
 	
 	public void draw_Tree(Node root, int i, JPanel mid_panel) {
 		JLabel label = new JLabel(root.getNodeData());
-		int check = 0;
+		int check = 0, node_x = i*60, node_y = i*60, node_wid = 60, node_hei = 40;
 		Node check_node = root;
 		NodeMouseListener nodeMouse = new NodeMouseListener(label, mid_panel);
 		label.addMouseListener(nodeMouse);
-		label.setSize(60, 40);
+		label.setSize(node_wid, node_hei);
 		label.setOpaque(true);
-		
-		while(true) {
-			if(check_node.getParent() != null) {
-				check_node = check_node.getParent();
-				check++;
-			}
-			else
-				break;
-		}
-		
-		switch(check) {
-			case 0 : 
-				label.setBackground(new Color(240, 90, 90));
-				break;
-			case 1 :				
-				label.setBackground(new Color(239, 187, 77));
-				break;
-			case 2 :				
-				label.setBackground(new Color(233, 232, 118));
-				break;
-			case 3 :				
-				label.setBackground(new Color(73, 208, 55));
-				break;
-			case 4 :				
-				label.setBackground(new Color(62, 96, 185));
-				break;
-			case 5 :				
-				label.setBackground(new Color(204, 70, 216));
-				break;
-		}
+	
+		int random_r, random_g, random_b;
+		random_r = (int)(Math.random() * 256);
+		random_g = (int)(Math.random() * 256);
+		random_b = (int)(Math.random() * 256);
+		Color random_color = new Color(random_r, random_g, random_b);
+		label.setBackground(random_color);
+		root.setnodeColor(random_color);
 
 		label.setBorder(new LineBorder(new Color(82, 130, 184), 2));
-		label.setLocation(i*60, i*60);
+		label.setLocation(node_x, node_y);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		panel_Mid.add(label);
+		root.setmyLabel(label);
+		root.setNodex(node_x);
+		root.setNodey(node_y);
+		root.setNodewid(node_wid);
+		root.setNodehei(node_hei);
        
 		// 자식 노드가 존재한다면
 	    if(root.getLeftChild() != null)
@@ -156,19 +147,18 @@ public class SplitPanel {
 	   panel_Mid.repaint();
 	}
 	
-	 class NodeMouseListener implements MouseListener, MouseMotionListener {
-		 JLabel label;
-		 JPanel mid_panel;
-		 int before_x, before_y;
+	class NodeMouseListener implements MouseListener, MouseMotionListener {
+		JLabel label;
+		JPanel mid_panel;
+		int before_x, before_y;
 		 
-		 public NodeMouseListener(JLabel label, JPanel panel) {
-			 this.label = label;
-			 mid_panel = panel;
-			 System.out.println("추가됐음");
-		 }
+		public NodeMouseListener(JLabel label, JPanel panel) {
+			this.label = label;
+			mid_panel = panel;
+		}
 		 
-		 public void mouseDragged(MouseEvent e) {
-		 }
+		public void mouseDragged(MouseEvent e) {
+		}
 
 		public void mouseMoved(MouseEvent e) {
 			int now_x = e.getX();
@@ -188,6 +178,7 @@ public class SplitPanel {
 		public void mousePressed(MouseEvent e) {
 			before_x = e.getX();
 			before_y = e.getY();
+			
 		}
 
 		public void mouseReleased(MouseEvent e) {
@@ -195,10 +186,8 @@ public class SplitPanel {
 			int now_y = e.getY();
 			int label_x = label.getX();
 			int label_y = label.getY();
-			//System.out.println("마우스 뗌 x: "+ now_x + " y: " + now_y);
-			//label.setLocation(label_x + x - label.getWidth()/2, label_y + y - label.getHeight()/2);
 			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
 			mid_panel.repaint();
 		}
-	 }
+	}
 }
