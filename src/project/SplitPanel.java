@@ -33,7 +33,8 @@ public class SplitPanel {
 	JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	JSplitPane split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	Tree myTree = new Tree();
-
+	boolean isNotFirst = false;
+	
 	
 	public SplitPanel() {
         split.setDividerLocation( 300 );
@@ -59,10 +60,23 @@ public class SplitPanel {
 		
 		ActionListener TextPanelActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				myTree = new Tree();
+				if(isNotFirst) {				
+					for(JLabel label : jLabel_nodes) {
+						label.setText("");
+						label.setOpaque(false);
+					}
+					myDrawPanel.revalidate();
+					myDrawPanel.repaint();
+				}
+				jLabel_nodes.clear();
+				node_for_Labels.clear();
 				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
-				make_JLabelArray(myTree.node_count);
 				draw_Tree(myTree.root, 0, panel_Mid);
+				recoloring_tree();
 				panel_Mid.repaint();
+				
+				isNotFirst = true;
 			}
 		};
 	    textbutton.addActionListener(TextPanelActionListener);	//Action 리스너 달기
@@ -116,13 +130,6 @@ public class SplitPanel {
         return split;
 	}
 	
-	public void make_JLabelArray(int node_count) {
-		/*for(int i = 0; i < node_count; i++) {
-			jLabel_nodes[i] = new JLabel();
-			node_for_Labels[i] = new Node("");
-		}*/	
-	}
-	
 	public void draw_Tree(Node root, int i, JPanel mid_panel) {
 		JLabel label = new JLabel(root.getNodeData());
 		int check = 0, node_x = i*60, node_y = i*60, node_wid = 60, node_hei = 40;
@@ -167,6 +174,36 @@ public class SplitPanel {
 	   panel_Mid.repaint();
 	}
 	
+	public void recoloring_tree() {
+		Node temp_Node, myNode;
+		int before_count = 0, count;
+		
+		for(int i = 0; i < node_for_Labels.size(); i++) {
+			temp_Node = node_for_Labels.get(i);
+			myNode = node_for_Labels.get(i);
+			count = 0;
+			while(true) {
+				if(temp_Node.getParent() != null) {
+					temp_Node = temp_Node.getParent();
+					count++;
+				}
+				else
+					break;				
+			}
+			
+			if(count > before_count) {
+				before_count = count;
+				Color color = node_for_Labels.get(i).getNodecolor();
+				while(myNode.getRightSibling() != null) {
+					myNode = myNode.getRightSibling();
+					myNode.setNodeColor(color);
+					myNode.myLabel.setBackground(color);
+				}
+			}
+		}
+		
+	}
+	
 	class NodeMouseListener implements MouseListener, MouseMotionListener {
 		JLabel label;
 		JPanel mid_panel;
@@ -177,7 +214,6 @@ public class SplitPanel {
 			this.label = label;
 			mid_panel = panel;
 			int i = jLabel_nodes.indexOf(label);
-			System.out.println("i = "+ i);
 			myNode = node_for_Labels.get(i);
 		}
 		 
@@ -207,9 +243,9 @@ public class SplitPanel {
 			node_yfield.setText(Integer.toString(myNode.getNodey()));
 			node_widfield.setText(Integer.toString(myNode.getNodewid()));
 			node_heifield.setText(Integer.toString(myNode.getNodehei()));
-			node_colorfield.setText("0x" + Integer.toString(myNode.getNodecolor().getRed()) + 
-					Integer.toString(myNode.getNodecolor().getGreen()) + 
-					Integer.toString(myNode.getNodecolor().getBlue()));
+			node_colorfield.setText("0X" + Long.toHexString(myNode.getNodecolor().getRed()) + 
+					Long.toHexString(myNode.getNodecolor().getGreen()) + 
+					Long.toHexString(myNode.getNodecolor().getBlue()));
 		}
 
 		public void mouseReleased(MouseEvent e) {
@@ -217,8 +253,12 @@ public class SplitPanel {
 			int now_y = e.getY();
 			int label_x = label.getX();
 			myNode.setNodex(label_x);
+			node_xfield.setText(Integer.toString(myNode.getNodex()));
+			
 			int label_y = label.getY();
 			myNode.setNodey(label_y);
+			node_yfield.setText(Integer.toString(myNode.getNodey()));
+			
 			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
 			mid_panel.repaint();
 		}

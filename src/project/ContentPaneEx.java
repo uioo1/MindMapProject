@@ -26,4 +26,8 @@ public class ContentPaneEx extends JFrame{
 	    this.setVisible(true);
 	}
 	
+	public void repaintFrame() {
+		myframe.repaint();
+	}
+	
 }
