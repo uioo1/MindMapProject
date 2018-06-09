@@ -1,20 +1,20 @@
 package project;
 
-import javax.swing.JMenu;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.awt.event.*;
 import java.io.File;
 import java.awt.*;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-
-public class MenuBar extends JFrame{
+public class MenuBar extends JFrame {	
 	public MenuBar() {
 		 
 	}
@@ -66,6 +66,7 @@ public class MenuBar extends JFrame{
 			pack(); // 이미지의 크기에 맞추어 프레임 크기 조절
 		}
 	}
+	
 	class SaveAsActionListener implements ActionListener {
 		private JFileChooser chooser;
 		public SaveAsActionListener() {
@@ -87,19 +88,18 @@ public class MenuBar extends JFrame{
 
 			JSONObject obj = new JSONObject();
 			
-			
-			obj.put("name", "mkyong.com");
-		    obj.put("age", new Integer(100));
 		    JSONArray list = new JSONArray();
-		    list.add("msg 1");
-		    list.add("msg 2");
-		    list.add("msg 3");
-		     
-		    obj.put("messages", list);
-		    	 
+		    for(Node label : SplitPanel.node_for_Labels) {
+		    	System.out.println(label.getNodeData());
+		    	list.add(label);
+		    }
+		    for(JLabel label : SplitPanel.jLabel_nodes) {
+		    	list.add(label);
+		    }
+		    
 		    try {
 		     
-		    	FileWriter file = new FileWriter("c:\\test.json");
+		    	FileWriter file = new FileWriter("c:\\test3.json");
 		    	file.write(obj.toJSONString());
 		   		file.flush();
 		  		file.close();
@@ -109,8 +109,6 @@ public class MenuBar extends JFrame{
 		   	}
 		   	System.out.println(" ");
 		}
-   	}		
-	
+	}	
 }
-
-
+	

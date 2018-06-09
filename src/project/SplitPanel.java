@@ -12,16 +12,15 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-
 public class SplitPanel {
 	JPanel panel_Mid;	//°¡¿îµ¥ ¸¶ÀÎµå¸ÊÆÐ³Î Á¤ÀÇ
 	JPanel panel_Left_Background;	//textarea ¿Í Àû¿ëbutoonÀ» °¡Áö°íÀÖ´Â ÆÐ³Î
 	JPanel panel_Right;	//¿À¸¥ÂÊ ¼Ó¼º ÆÐ³Î Á¤ÀÇ
 	JPanel panel_Background;
 	//JLabel jLabel_nodes[] = new JLabel[100];	//JLabelÀÌ¶û Node¶û ÀÌ¾îÁÖ´Â°Å
-	ArrayList<JLabel> jLabel_nodes = new ArrayList<JLabel>();
+	public static ArrayList<JLabel> jLabel_nodes = new ArrayList<JLabel>();
 	//Node node_for_Labels[] = new Node[100];
-	ArrayList<Node> node_for_Labels = new ArrayList<Node>();
+	public static ArrayList<Node> node_for_Labels = new ArrayList<Node>();
 	JTextArea myDrawPanel;	//textarea Á¤ÀÇ
 	JTextField node_textfield = new JTextField();
 	JTextField node_xfield = new JTextField();
@@ -33,8 +32,11 @@ public class SplitPanel {
 	JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	JSplitPane split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	Tree myTree = new Tree();
+<<<<<<< HEAD
 	boolean isNotFirst = false;
 	
+=======
+>>>>>>> MindMapProject/ë©”ë‰´ë°”_ìˆ˜ì •
 	
 	public SplitPanel() {
         split.setDividerLocation( 300 );
@@ -281,6 +283,14 @@ public class SplitPanel {
 			
 			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
 			mid_panel.repaint();
+		}
+		
+		public ArrayList getJLabelList() {
+			return jLabel_nodes;
+		}
+		
+		public ArrayList getNodeList() {
+			return node_for_Labels;
 		}
 		
 	}
