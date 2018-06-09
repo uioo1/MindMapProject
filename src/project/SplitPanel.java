@@ -12,16 +12,15 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-
 public class SplitPanel {
 	JPanel panel_Mid;	//가운데 마인드맵패널 정의
 	JPanel panel_Left_Background;	//textarea 와 적용butoon을 가지고있는 패널
 	JPanel panel_Right;	//오른쪽 속성 패널 정의
 	JPanel panel_Background;
 	//JLabel jLabel_nodes[] = new JLabel[100];	//JLabel이랑 Node랑 이어주는거
-	ArrayList<JLabel> jLabel_nodes = new ArrayList<JLabel>();
+	public static ArrayList<JLabel> jLabel_nodes = new ArrayList<JLabel>();
 	//Node node_for_Labels[] = new Node[100];
-	ArrayList<Node> node_for_Labels = new ArrayList<Node>();
+	public static ArrayList<Node> node_for_Labels = new ArrayList<Node>();
 	JTextArea myDrawPanel;	//textarea 정의
 	JTextField node_textfield = new JTextField();
 	JTextField node_xfield = new JTextField();
@@ -33,7 +32,6 @@ public class SplitPanel {
 	JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	JSplitPane split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	Tree myTree = new Tree();
-
 	
 	public SplitPanel() {
         split.setDividerLocation( 300 );
@@ -235,6 +233,14 @@ public class SplitPanel {
 			myNode.setNodey(label_y);
 			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
 			mid_panel.repaint();
+		}
+		
+		public ArrayList getJLabelList() {
+			return jLabel_nodes;
+		}
+		
+		public ArrayList getNodeList() {
+			return node_for_Labels;
 		}
 		
 	}
