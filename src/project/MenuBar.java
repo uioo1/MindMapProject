@@ -1,10 +1,20 @@
 package project;
 
 import javax.swing.JMenu;
+import javax.swing.*;
+import javax.swing.filechooser.*;
+import java.awt.event.*;
+import java.io.File;
+import java.awt.*;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import java.io.FileWriter;
+import java.io.IOException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
-public class MenuBar {
+
+public class MenuBar extends JFrame{
 	public MenuBar() {
 		 
 	}
@@ -14,18 +24,93 @@ public class MenuBar {
         JMenu f = new JMenu("File");
         JMenu e = new JMenu("edit");
         
-        f.add(new JMenuItem("New"));
-        f.add(new JMenuItem("Open"));
-        f.addSeparator();//분리선 삽입
-        f.add(new JMenuItem("Save"));
-        f.add(new JMenuItem("SaveAs"));
+        JMenuItem JMenu_New = new JMenuItem("New"); 
+        JMenuItem JMenu_Open = new JMenuItem("Open"); 
+        JMenuItem JMenu_Save = new JMenuItem("Save"); 
+        JMenuItem JMenu_SaveAs = new JMenuItem("SaveAs"); 
+        JMenuItem JMenu_Close = new JMenuItem("Close"); 
+        JMenuItem JMenu_Apply = new JMenuItem("Apply"); 
+        JMenuItem JMenu_Change = new JMenuItem("Change"); 
+
+        JMenu_Open.addActionListener(new OpenActionListener());
+        JMenu_SaveAs.addActionListener(new SaveAsActionListener());
         
-        e.add(new JMenuItem("close"));
-        e.add(new JMenuItem("apply"));
-        e.add(new JMenuItem("change"));
+        f.add(JMenu_New);
+        f.add(JMenu_Open);
+        f.addSeparator();//분리선 삽입
+        f.add(JMenu_Save);
+        f.add(JMenu_SaveAs);
+        
+        e.add(JMenu_Close);
+        e.add(JMenu_Apply);
+        e.add(JMenu_Change);
         
         menuBar.add(f);
 		menuBar.add(e);
 		return menuBar;
 	}
+	class OpenActionListener implements ActionListener {
+		private JFileChooser chooser;
+		public OpenActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent e) {
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON","JSON");
+			chooser.setFileFilter(filter);
+			int ret = chooser.showOpenDialog(null);
+			if(ret != JFileChooser.APPROVE_OPTION) {
+				JOptionPane.showMessageDialog(null,"파일을 선택하지 않았습니다", "경고",JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			String filePath = chooser.getSelectedFile().getPath();
+			pack(); // 이미지의 크기에 맞추어 프레임 크기 조절
+		}
+	}
+	class SaveAsActionListener implements ActionListener {
+		private JFileChooser chooser;
+		public SaveAsActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent e) {
+			JFrame parentFrame = new JFrame();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON","JSON");
+			chooser = new JFileChooser();
+			chooser.setFileFilter(filter);
+			chooser.setDialogTitle("Specify a file to save");   
+			 
+			int userSelection = chooser.showSaveDialog(parentFrame);
+			 
+			if (userSelection == chooser.APPROVE_OPTION) {
+			    File fileToSave = chooser.getSelectedFile();
+			    System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+			}
+
+			JSONObject obj = new JSONObject();
+			
+			
+			obj.put("name", "mkyong.com");
+		    obj.put("age", new Integer(100));
+		    JSONArray list = new JSONArray();
+		    list.add("msg 1");
+		    list.add("msg 2");
+		    list.add("msg 3");
+		     
+		    obj.put("messages", list);
+		    	 
+		    try {
+		     
+		    	FileWriter file = new FileWriter("c:\\test.json");
+		    	file.write(obj.toJSONString());
+		   		file.flush();
+		  		file.close();
+		    	 
+		    } catch (IOException e2) {
+		   		e2.printStackTrace();
+		   	}
+		   	System.out.println(" ");
+		}
+   	}		
+	
 }
+
+

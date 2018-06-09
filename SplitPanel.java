@@ -73,7 +73,7 @@ public class SplitPanel {
         panel_Right.setBackground(new Color(174, 246, 160)); 
         panel_Right.setPreferredSize( new Dimension( 350, 350 ) );
         panel_Right.setSize(200,600);
-    	GridLayout gridAttPane = new GridLayout(8,2,0,30);
+    	GridLayout gridAttPane = new GridLayout(7,2,0,30);
     	JLabel attribute_label = new JLabel("속성");    	
     	attribute_label.setOpaque(true);
     	attribute_label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -99,21 +99,7 @@ public class SplitPanel {
 		
 		panel_Right.add(new JLabel("  COLOR : "));		
 		panel_Right.add(node_colorfield);
-		
-		JButton button_attr = new JButton("변경");
-		panel_Right.add(button_attr);		
-		//panel_Right.add(node_colorfield);
 		panel_Right.setLayout(gridAttPane);
-		
-		/*ActionListener AttrButtonActionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
-				make_JLabelArray(myTree.node_count);
-				draw_Tree(myTree.root, 0, panel_Mid);
-				panel_Mid.repaint();
-			}
-		};
-	    textbutton.addActionListener(AttrButtonActionListener);	//Action 리스*///만드는중
 		
 		
 		//틀에 스플릿 추가
@@ -236,6 +222,5 @@ public class SplitPanel {
 			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
 			mid_panel.repaint();
 		}
-		
 	}
 }
