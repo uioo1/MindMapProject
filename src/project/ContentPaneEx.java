@@ -21,7 +21,6 @@ public class ContentPaneEx extends JFrame{
         this.add(split.splitpane_create());
         
 		this.setBackground(Color.darkGray);
-		this.setLocationRelativeTo(null);
 	    this.setSize(1600, 900);
 	    this.setVisible(true);
 	}

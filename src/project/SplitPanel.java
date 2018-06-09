@@ -205,6 +205,11 @@ public class SplitPanel {
 		
 	}
 	
+	public void relocating_tree() {
+		Node temp_Node, myNode;
+		int before_count = 0, count;
+	}
+	
 	class NodeMouseListener implements MouseListener, MouseMotionListener {
 		JLabel label;
 		JPanel mid_panel;
