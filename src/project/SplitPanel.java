@@ -59,20 +59,17 @@ public class SplitPanel {
 		ActionListener TextPanelActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				myTree = new Tree();
-				if(isNotFirst) {				
-					for(JLabel label : jLabel_nodes) {
-						label.setText("");
-						label.setOpaque(false);
-						label.setSize(0, 0);
-					}
-					myDrawPanel.revalidate();
-					myDrawPanel.repaint();
+				if(isNotFirst) {
+					panel_Mid.removeAll();
+					panel_Mid.revalidate();
+					panel_Mid.repaint();
 				}
 				jLabel_nodes.clear();
 				node_for_Labels.clear();
 				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
 				draw_Tree(myTree.root, 0, panel_Mid);
 				recoloring_tree();
+				relocating_tree();
 				panel_Mid.repaint();
 				
 				isNotFirst = true;
@@ -220,6 +217,8 @@ public class SplitPanel {
 	public void relocating_tree() {
 		Node temp_Node, myNode;
 		int before_count = 0, count;
+		System.out.println(myDrawPanel.getWidth() - panel_Right.getWidth());
+		jLabel_nodes.get(0).setLocation(panel_Mid.getWidth()/ 2 - jLabel_nodes.get(0).getWidth()/2, panel_Mid.getHeight() / 2 - jLabel_nodes.get(0).getHeight()/2);
 	}
 	
 	class NodeMouseListener implements MouseListener, MouseMotionListener {
