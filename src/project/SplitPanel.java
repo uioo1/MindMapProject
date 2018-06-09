@@ -32,11 +32,7 @@ public class SplitPanel {
 	JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	JSplitPane split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	Tree myTree = new Tree();
-<<<<<<< HEAD
 	boolean isNotFirst = false;
-	
-=======
->>>>>>> MindMapProject/메뉴바_수정
 	
 	public SplitPanel() {
         split.setDividerLocation( 300 );
