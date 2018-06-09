@@ -65,6 +65,7 @@ public class SplitPanel {
 					for(JLabel label : jLabel_nodes) {
 						label.setText("");
 						label.setOpaque(false);
+						label.setSize(0, 0);
 					}
 					myDrawPanel.revalidate();
 					myDrawPanel.repaint();
