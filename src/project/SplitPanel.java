@@ -238,9 +238,6 @@ public class SplitPanel {
 		}
 
 		public void mouseMoved(MouseEvent e) {
-			int now_x = e.getX();
-			int now_y = e.getY();
-			System.out.println("¸¶¿ì½º ¹«ºù x: "+ now_x + " y: " + now_y);
 		}
 
 		public void mouseClicked(MouseEvent e) {
