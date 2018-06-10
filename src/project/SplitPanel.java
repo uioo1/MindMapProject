@@ -8,12 +8,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 
 public class SplitPanel {
-	JPanel panel_Mid;	//가운데 마인드맵패널 정의
+	public static JPanel panel_Mid;	//가운데 마인드맵패널 정의
 	JPanel panel_Left_Background;	//textarea 와 적용butoon을 가지고있는 패널
 	JPanel panel_Right;	//오른쪽 속성 패널 정의
 	JPanel panel_Background;
@@ -21,7 +30,7 @@ public class SplitPanel {
 	public static ArrayList<JLabel> jLabel_nodes = new ArrayList<JLabel>();
 	//Node node_for_Labels[] = new Node[100];
 	public static ArrayList<Node> node_for_Labels = new ArrayList<Node>();
-	JTextArea myDrawPanel;	//textarea 정의
+	public static JTextArea myDrawPanel;	//textarea 정의
 	JTextField node_textfield = new JTextField();
 	JTextField node_xfield = new JTextField();
 	JTextField node_yfield = new JTextField();
@@ -286,4 +295,8 @@ public class SplitPanel {
 		}
 		
 	}
+	
+
+	
+
 }
