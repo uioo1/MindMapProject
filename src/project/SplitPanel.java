@@ -45,8 +45,12 @@ public class SplitPanel {
 	JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	JSplitPane split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	Tree myTree = new Tree();
-	JLabel before_click_label;
+	JLabel before_click_label = null;
+	JLabel resize_label[] = new JLabel[8];
+	JLabel before_resize_label[] = new JLabel[8];
 	boolean isNotFirst = false;
+	boolean isSameLabel = false;
+	boolean isReversed = false;
 	
 	
 	public SplitPanel() {
@@ -100,7 +104,7 @@ public class SplitPanel {
         panel_Right.setPreferredSize( new Dimension( 350, 350 ) );
         panel_Right.setSize(200,600);
     	GridLayout gridAttPane = new GridLayout(8,2,0,30);
-    	JLabel attribute_label = new JLabel("加己");    	
+    	JLabel attribute_label = new JLabel("加己");
     	attribute_label.setOpaque(true);
     	attribute_label.setHorizontalAlignment(SwingConstants.CENTER);
     	attribute_label.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -233,7 +237,6 @@ public class SplitPanel {
 	public void relocating_tree() {
 		Node temp_Node, myNode;
 		int before_count = 0, count;
-		//System.out.println(myDrawPanel.getWidth() - panel_Right.getWidth());
 		jLabel_nodes.get(0).setLocation(panel_Mid.getWidth()/ 2 - jLabel_nodes.get(0).getWidth()/2, panel_Mid.getHeight()/2 - jLabel_nodes.get(0).getHeight()/2);
 		
 		for(int i = 0; i < jLabel_nodes.size(); i++) {
@@ -246,6 +249,7 @@ public class SplitPanel {
 		JPanel mid_panel;
 		Node myNode;
 		int before_x, before_y;
+		boolean isMoved = false;
 		 
 		public NodeMouseListener(JLabel label, JPanel panel) {
 			this.label = label;
@@ -270,55 +274,116 @@ public class SplitPanel {
 		}
 
 		public void mousePressed(MouseEvent e) {
-			if(before_click_label == label) {
-				;
-			}
-			else if(before_click_label != null)
-				node_back_again();
-			
 			before_x = e.getX();
 			before_y = e.getY();
 			node_textfield.setText(myNode.getNodeData());
-			node_xfield.setText(Integer.toString(myNode.getNodex()));
-			node_yfield.setText(Integer.toString(myNode.getNodey()));
 			node_widfield.setText(Integer.toString(myNode.getNodewid()));
 			node_heifield.setText(Integer.toString(myNode.getNodehei()));
 			node_colorfield.setText(Long.toHexString(myNode.getNodecolor().getRed()) + 
 					Long.toHexString(myNode.getNodecolor().getGreen()) + 
 					Long.toHexString(myNode.getNodecolor().getBlue()));
-			label.setBackground(new Color(255 - myNode.getNodecolor().getRed(), 255 - myNode.getNodecolor().getGreen(), 255 - myNode.getNodecolor().getBlue()));
-			label.setForeground(new Color(255 - label.getForeground().getRed(), 255 - label.getForeground().getGreen(), 255 - label.getForeground().getBlue()));
-			myNode.setNodeColor(new Color(255 - myNode.getNodecolor().getRed(), 255 - myNode.getNodecolor().getGreen(), 255 - myNode.getNodecolor().getBlue()));
 			
-			if(before_click_label == label) {
-				before_click_label = null;
+			locating_resize_label(myNode.getNodex(), myNode.getNodey());
+			
+			if(before_click_label == null) {	//盖贸澜
 			}
-			else {
-				before_click_label = label;
+			else if(isReversed == false) {
+				
 			}
+			else if(isReversed == true) {
+				if(before_click_label == label) {
+					removing_before_resize_label();
+				}
+				else {
+					node_back_again();
+					removing_before_resize_label();
+				}
+			}			
+			
 		}
 
 		public void mouseReleased(MouseEvent e) {
 			int now_x = e.getX();
 			int now_y = e.getY();
 			int label_x = label.getX();
-			myNode.setNodex(label_x);
-			node_xfield.setText(Integer.toString(myNode.getNodex()));
-			
 			int label_y = label.getY();
-			myNode.setNodey(label_y);
-			node_yfield.setText(Integer.toString(myNode.getNodey()));
+			myNode.setNodex(label_x + (now_x - before_x));
+			myNode.setNodey(label_y + (now_y - before_y));
+			node_xfield.setText(Integer.toString(label_x + (now_x - before_x)));			
+			node_yfield.setText(Integer.toString(label_y + (now_y - before_y)));
 			
 			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
+			
+			if(before_click_label == null) {	//盖贸澜
+				reversing_node();
+				isReversed = true;
+			}
+			else if(isReversed == false) {
+				if(before_click_label == label) {
+					if(now_x == before_x && now_y == before_y) {
+						reversing_node();
+						isReversed = true;
+					}
+					else {
+						reversing_node();
+						removing_now_resize_label();
+						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
+						isReversed = true;
+					}
+				}
+				else {
+					if(now_x == before_x && now_y == before_y) {
+						reversing_node();
+						isReversed = true;
+					}
+					else {
+						reversing_node();
+						removing_now_resize_label();
+						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
+						isReversed = true;
+					}
+				}
+			}
+			else if(isReversed == true) {
+				if(before_click_label == label) {
+					if(now_x == before_x && now_y == before_y) {
+						reversing_node();
+						removing_now_resize_label();
+						isReversed = false;
+					}
+					else {
+						removing_now_resize_label();
+						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
+						isReversed = true;
+					}
+				}
+				else {
+					if(now_x == before_x && now_y == before_y) {
+						reversing_node();
+						isReversed = true;
+					}
+					else {
+						reversing_node();
+						removing_now_resize_label();
+						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
+						isReversed = true;
+					}					
+				}
+			}
+			
 			mid_panel.repaint();
+			
+			for(int i = 0; i < resize_label.length; i++) {
+				before_resize_label[i] = resize_label[i];
+			}
+			before_click_label = label;	
+			
 		}
 		
-		public ArrayList<JLabel> getJLabelList() {
-			return jLabel_nodes;
-		}
-		
-		public ArrayList<Node> getNodeList() {
-			return node_for_Labels;
+		public void reversing_node() {
+			label.setBackground(new Color(255 - myNode.getNodecolor().getRed(), 255 - myNode.getNodecolor().getGreen(), 255 - myNode.getNodecolor().getBlue()));
+			label.setForeground(new Color(255 - label.getForeground().getRed(), 255 - label.getForeground().getGreen(), 255 - label.getForeground().getBlue()));
+			myNode.setNodeColor(new Color(255 - myNode.getNodecolor().getRed(), 255 - myNode.getNodecolor().getGreen(), 255 - myNode.getNodecolor().getBlue()));
 		}
 		
 		public void node_back_again() {
@@ -326,6 +391,57 @@ public class SplitPanel {
 			before_click_label.setBackground(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
 			before_click_label.setForeground(new Color(255 - before_click_label.getForeground().getRed(), 255 - before_click_label.getForeground().getGreen(), 255 - before_click_label.getForeground().getBlue()));
 			temp_node.setNodeColor(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+		}
+		
+		public void locating_resize_label(int real_x, int real_y) {
+			int x = real_x;
+			int y = real_y;
+			int wid = myNode.getNodewid();
+			int hei = myNode.getNodehei();
+			
+			for(int i = 0; i < resize_label.length; i++) {
+				resize_label[i] = new JLabel("");
+				resize_label[i].setOpaque(true);
+				resize_label[i].setBorder(new LineBorder(new Color(155, 157, 159), 1));
+				resize_label[i].setSize(8, 8);
+				resize_label[i].setBackground(Color.WHITE);
+				//before_resize_label[i] = resize_label[i];
+			}
+			//System.out.println("积板绰单?");
+			resize_label[0].setLocation(x - 4, y - 4);
+			mid_panel.add(resize_label[0]);
+			resize_label[1].setLocation(x + wid/2 - 4, y - 4);
+			mid_panel.add(resize_label[1]);
+			resize_label[2].setLocation(x + wid - 4, y - 4);
+			mid_panel.add(resize_label[2]);
+			resize_label[3].setLocation(x - 4, y + hei/2 - 4);
+			mid_panel.add(resize_label[3]);
+			resize_label[4].setLocation(x + wid - 4, y + hei/2 - 4);
+			mid_panel.add(resize_label[4]);
+			resize_label[5].setLocation(x - 4, y + hei - 4);
+			mid_panel.add(resize_label[5]);
+			resize_label[6].setLocation(x + wid/2 - 4, y + hei - 4);
+			mid_panel.add(resize_label[6]);
+			resize_label[7].setLocation(x + wid - 4, y + hei - 4);
+			mid_panel.add(resize_label[7]);
+			
+			mid_panel.repaint();
+		}
+		
+		public void removing_before_resize_label() {
+			if(before_resize_label[0] != null) {
+				for(int i = 0; i < before_resize_label.length; i++) {
+					mid_panel.remove(before_resize_label[i]);
+				}
+			}
+		}
+		
+		public void removing_now_resize_label() {
+			if(resize_label[0] != null) {
+				for(int i = 0; i < resize_label.length; i++) {
+					mid_panel.remove(resize_label[i]);
+				}
+			}
 		}
 		
 	}
@@ -348,16 +464,26 @@ public class SplitPanel {
 		}
 
 		public void mouseReleased(MouseEvent arg0) {
-			node_back_again();
+			if(isReversed == true ) {
+				node_back_again();
+				removing_before_resize_label();
+				panel_Mid.repaint();
+				isReversed = false;
+			}
 		}
 		
 		public void node_back_again() {
-			if(before_click_label != null) {
-				Node temp_node = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
-				before_click_label.setBackground(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
-				before_click_label.setForeground(new Color(255 - before_click_label.getForeground().getRed(), 255 - before_click_label.getForeground().getGreen(), 255 - before_click_label.getForeground().getBlue()));
-				temp_node.setNodeColor(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
-				before_click_label = null;
+			Node temp_node = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
+			before_click_label.setBackground(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+			before_click_label.setForeground(new Color(255 - before_click_label.getForeground().getRed(), 255 - before_click_label.getForeground().getGreen(), 255 - before_click_label.getForeground().getBlue()));
+			temp_node.setNodeColor(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+		}
+		
+		public void removing_before_resize_label() {
+			if(before_resize_label[0] != null) {
+				for(int i = 0; i < before_resize_label.length; i++) {
+					panel_Mid.remove(before_resize_label[i]);
+				}
 			}
 		}
 		
@@ -645,7 +771,5 @@ public class SplitPanel {
 		     return tool;
 		}
 	}
-
-
 
 }
