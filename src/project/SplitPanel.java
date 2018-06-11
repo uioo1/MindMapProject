@@ -32,9 +32,7 @@ public class SplitPanel {
 	JPanel panel_Left_Background;	//textarea 와 적용butoon을 가지고있는 패널
 	JPanel panel_Right;	//오른쪽 속성 패널 정의
 	JPanel panel_Background;
-	//JLabel jLabel_nodes[] = new JLabel[100];	//JLabel이랑 Node랑 이어주는거
 	public static ArrayList<JLabel> jLabel_nodes = new ArrayList<JLabel>();
-	//Node node_for_Labels[] = new Node[100];
 	public static ArrayList<Node> node_for_Labels = new ArrayList<Node>();
 	public static JTextArea myDrawPanel;	//textarea 정의
 	JTextField node_textfield = new JTextField();
@@ -47,7 +45,9 @@ public class SplitPanel {
 	JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	JSplitPane split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	Tree myTree = new Tree();
+	JLabel before_click_label;
 	boolean isNotFirst = false;
+	
 	
 	public SplitPanel() {
         split.setDividerLocation( 300 );
@@ -58,6 +58,7 @@ public class SplitPanel {
         panel_Mid = new JPanel();
         panel_Mid.setBackground(new Color(163, 202, 241));
         panel_Mid.setLayout(null);
+        panel_Mid.addMouseListener(new MindMapMouseListener());
         split2.setBackground(new Color(100, 100, 100));
         
         
@@ -86,7 +87,7 @@ public class SplitPanel {
 				recoloring_tree();
 				relocating_tree();
 				panel_Mid.repaint();
-				
+				before_click_label = null;
 				isNotFirst = true;
 			}
 		};
@@ -232,7 +233,7 @@ public class SplitPanel {
 	public void relocating_tree() {
 		Node temp_Node, myNode;
 		int before_count = 0, count;
-		System.out.println(myDrawPanel.getWidth() - panel_Right.getWidth());
+		//System.out.println(myDrawPanel.getWidth() - panel_Right.getWidth());
 		jLabel_nodes.get(0).setLocation(panel_Mid.getWidth()/ 2 - jLabel_nodes.get(0).getWidth()/2, panel_Mid.getHeight()/2 - jLabel_nodes.get(0).getHeight()/2);
 		
 		for(int i = 0; i < jLabel_nodes.size(); i++) {
@@ -254,7 +255,6 @@ public class SplitPanel {
 		}
 		 
 		public void mouseDragged(MouseEvent e) {
-			System.out.println("강승모 븅신");
 		}
 
 		public void mouseMoved(MouseEvent e) {
@@ -270,6 +270,12 @@ public class SplitPanel {
 		}
 
 		public void mousePressed(MouseEvent e) {
+			if(before_click_label == label) {
+				;
+			}
+			else if(before_click_label != null)
+				node_back_again();
+			
 			before_x = e.getX();
 			before_y = e.getY();
 			node_textfield.setText(myNode.getNodeData());
@@ -280,8 +286,16 @@ public class SplitPanel {
 			node_colorfield.setText(Long.toHexString(myNode.getNodecolor().getRed()) + 
 					Long.toHexString(myNode.getNodecolor().getGreen()) + 
 					Long.toHexString(myNode.getNodecolor().getBlue()));
+			label.setBackground(new Color(255 - myNode.getNodecolor().getRed(), 255 - myNode.getNodecolor().getGreen(), 255 - myNode.getNodecolor().getBlue()));
+			label.setForeground(new Color(255 - label.getForeground().getRed(), 255 - label.getForeground().getGreen(), 255 - label.getForeground().getBlue()));
+			myNode.setNodeColor(new Color(255 - myNode.getNodecolor().getRed(), 255 - myNode.getNodecolor().getGreen(), 255 - myNode.getNodecolor().getBlue()));
 			
-			
+			if(before_click_label == label) {
+				before_click_label = null;
+			}
+			else {
+				before_click_label = label;
+			}
 		}
 
 		public void mouseReleased(MouseEvent e) {
@@ -299,15 +313,55 @@ public class SplitPanel {
 			mid_panel.repaint();
 		}
 		
-		public ArrayList getJLabelList() {
+		public ArrayList<JLabel> getJLabelList() {
 			return jLabel_nodes;
 		}
 		
-		public ArrayList getNodeList() {
+		public ArrayList<Node> getNodeList() {
 			return node_for_Labels;
 		}
 		
-	}	
+		public void node_back_again() {
+			Node temp_node = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
+			before_click_label.setBackground(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+			before_click_label.setForeground(new Color(255 - before_click_label.getForeground().getRed(), 255 - before_click_label.getForeground().getGreen(), 255 - before_click_label.getForeground().getBlue()));
+			temp_node.setNodeColor(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+		}
+		
+	}
+	
+	class MindMapMouseListener implements MouseListener{
+		 
+		public MindMapMouseListener() {
+		}
+
+		public void mouseClicked(MouseEvent arg0) {
+		}
+
+		public void mouseEntered(MouseEvent arg0) {	
+		}
+
+		public void mouseExited(MouseEvent arg0) {	
+		}
+
+		public void mousePressed(MouseEvent arg0) {	
+		}
+
+		public void mouseReleased(MouseEvent arg0) {
+			node_back_again();
+		}
+		
+		public void node_back_again() {
+			if(before_click_label != null) {
+				Node temp_node = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
+				before_click_label.setBackground(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+				before_click_label.setForeground(new Color(255 - before_click_label.getForeground().getRed(), 255 - before_click_label.getForeground().getGreen(), 255 - before_click_label.getForeground().getBlue()));
+				temp_node.setNodeColor(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+				before_click_label = null;
+			}
+		}
+		
+	}
 
 	class MenuBar {	
 		public MenuBar() {
