@@ -1,6 +1,7 @@
 package project;
 
 import java.awt.*;
+import java.awt.color.*;
 
 import java.awt.List;
 import java.util.*;
@@ -23,18 +24,19 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.json.simple.*;
 
 
 public class SplitPanel {
 	MenuBar menubar = new MenuBar();	
 	ToolBar toolbar = new ToolBar();
-	public static JPanel panel_Mid;	//°¡¿îµ¥ ¸¶ÀÎµå¸ÊÆĞ³Î Á¤ÀÇ
-	JPanel panel_Left_Background;	//textarea ¿Í Àû¿ëbutoonÀ» °¡Áö°íÀÖ´Â ÆĞ³Î
-	JPanel panel_Right;	//¿À¸¥ÂÊ ¼Ó¼º ÆĞ³Î Á¤ÀÇ
+	public static JPanel panel_Mid;	//ê°€ìš´ë° ë§ˆì¸ë“œë§µíŒ¨ë„ ì •ì˜
+	JPanel panel_Left_Background;	//textarea ì™€ ì ìš©butoonì„ ê°€ì§€ê³ ìˆëŠ” íŒ¨ë„
+	JPanel panel_Right;	//ì˜¤ë¥¸ìª½ ì†ì„± íŒ¨ë„ ì •ì˜
 	JPanel panel_Background;
 	public static ArrayList<JLabel> jLabel_nodes = new ArrayList<JLabel>();
 	public static ArrayList<Node> node_for_Labels = new ArrayList<Node>();
-	public static JTextArea myDrawPanel;	//textarea Á¤ÀÇ
+	public static JTextArea myDrawPanel;	//textarea ì •ì˜
 	JTextField node_textfield = new JTextField();
 	JTextField node_xfield = new JTextField();
 	JTextField node_yfield = new JTextField();
@@ -58,7 +60,7 @@ public class SplitPanel {
         split.setDividerLocation( 300 );
         split2.setDividerLocation( 800 );
         
-        /////////////////°¡¿îµ¥ ¸¶ÀÎµå¸Ê ÆĞ³Î
+        /////////////////ê°€ìš´ë° ë§ˆì¸ë“œë§µ íŒ¨ë„
         
         panel_Mid = new JPanel();
         panel_Mid.setBackground(new Color(163, 202, 241));
@@ -67,10 +69,10 @@ public class SplitPanel {
         split2.setBackground(new Color(100, 100, 100));
         
         
-        /////////////////¿ŞÂÊ ÅØ½ºÆ® ÆĞ³Î+´Ù ´ã´Â ÆĞ³Î
+        /////////////////ì™¼ìª½ í…ìŠ¤íŠ¸ íŒ¨ë„+ë‹¤ ë‹´ëŠ” íŒ¨ë„
         panel_Left_Background = new JPanel();
         myDrawPanel = new JTextArea(30,25);
-        JButton textbutton = new JButton("Àû¿ë");       
+        JButton textbutton = new JButton("ì ìš©");       
 		
 		panel_Left_Background.setBackground(new Color(255, 255, 255));
 		panel_Left_Background.setLayout(new BorderLayout(5,5));
@@ -87,7 +89,7 @@ public class SplitPanel {
 				}
 				jLabel_nodes.clear();
 				node_for_Labels.clear();
-				myTree.getTextPanel(myDrawPanel.getText());	//tree¿¡ textPanel³»¿ë ³Ñ°ÜÁÖ±â
+				myTree.getTextPanel(myDrawPanel.getText());	//treeì— textPanelë‚´ìš© ë„˜ê²¨ì£¼ê¸°
 				draw_Tree(myTree.root, 0, panel_Mid);
 				recoloring_tree();
 				relocating_tree();
@@ -96,16 +98,16 @@ public class SplitPanel {
 				isNotFirst = true;
 			}
 		};
-	    textbutton.addActionListener(TextPanelActionListener);	//Action ¸®½º³Ê ´Ş±â
+	    textbutton.addActionListener(TextPanelActionListener);	//Action ë¦¬ìŠ¤ë„ˆ ë‹¬ê¸°
 
 				
-        ////////////////¿À¸¥ÂÊ ¼³Á¤ ÆĞ³Î
+        ////////////////ì˜¤ë¥¸ìª½ ì„¤ì • íŒ¨ë„
         panel_Right = new JPanel();
         panel_Right.setBackground(new Color(174, 246, 160)); 
         panel_Right.setPreferredSize( new Dimension( 350, 350 ) );
         panel_Right.setSize(200,600);
     	GridLayout gridAttPane = new GridLayout(8,2,0,30);
-    	JLabel attribute_label = new JLabel("¼Ó¼º");
+    	JLabel attribute_label = new JLabel("ì†ì„±");
     	attribute_label.setOpaque(true);
     	attribute_label.setHorizontalAlignment(SwingConstants.CENTER);
     	attribute_label.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -131,15 +133,14 @@ public class SplitPanel {
 		panel_Right.add(new JLabel("  COLOR : "));		
 		panel_Right.add(node_colorfield);
 		
-		JButton button_attr = new JButton("º¯°æ");
+		JButton button_attr = new JButton("ë³€ê²½");
 		panel_Right.add(button_attr);		
 		panel_Right.setLayout(gridAttPane);
 		
-		
-		//Æ²¿¡ ½ºÇÃ¸´ Ãß°¡
+		//í‹€ì— ìŠ¤í”Œë¦¿ ì¶”ê°€
 		split.setLeftComponent(panel_Left_Background);
 		split.setRightComponent(split2);
-		//½ºÇÃ¸´ ÇÏ³ªÀ§¿¡ ¹Ìµå¿Í ¶óÀÌÆ® Ãß°¡
+		//ìŠ¤í”Œë¦¿ í•˜ë‚˜ìœ„ì— ë¯¸ë“œì™€ ë¼ì´íŠ¸ ì¶”ê°€
 		split2.setLeftComponent(panel_Mid);		
 		split2.setRightComponent(panel_Right);
 		
@@ -170,7 +171,7 @@ public class SplitPanel {
 		label.setLocation(node_x, node_y);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		panel_Mid.add(label);	//Label ¸¶ÀÎµå¸Ê¿¡ Ãß°¡
+		panel_Mid.add(label);	//Label ë§ˆì¸ë“œë§µì— ì¶”ê°€
 		jLabel_nodes.add(label);	
 		node_for_Labels.add(root);
 		root.setmyLabel(label);
@@ -183,11 +184,11 @@ public class SplitPanel {
 		NodeMouseListener nodeMouse = new NodeMouseListener(label, mid_panel);
 		label.addMouseListener(nodeMouse);
        
-		// ÀÚ½Ä ³ëµå°¡ Á¸ÀçÇÑ´Ù¸é
+		// ìì‹ ë…¸ë“œê°€ ì¡´ì¬í•œë‹¤ë©´
 	    if(root.getLeftChild() != null)
 	    	draw_Tree(root.getLeftChild(), i + 1, panel_Mid);
 	         
-	    // ÇüÁ¦ ³ëµå°¡ Á¸ÀçÇÑ´Ù¸é
+	    // í˜•ì œ ë…¸ë“œê°€ ì¡´ì¬í•œë‹¤ë©´
 	    if(root.getRightSibling() != null)
 	    	draw_Tree(root.getRightSibling(), i + 1, panel_Mid);
 	    	
@@ -275,7 +276,7 @@ public class SplitPanel {
 			
 			locating_resize_label(myNode.getNodex(), myNode.getNodey());
 			
-			if(before_click_label == null) {	//¸ÇÃ³À½
+			if(before_click_label == null) {	//ë§¨ì²˜ìŒ
 				resize_box[0] = new Rectangle(50, 50, 100, 100);
 			}
 			else if(isReversed == false) {
@@ -305,7 +306,7 @@ public class SplitPanel {
 			
 			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
 			
-			if(before_click_label == null) {	//¸ÇÃ³À½
+			if(before_click_label == null) {	//ë§¨ì²˜ìŒ
 				reversing_node();
 				isReversed = true;
 			}
@@ -398,7 +399,7 @@ public class SplitPanel {
 				resize_label[i].setBackground(Color.WHITE);
 				//before_resize_label[i] = resize_label[i];
 			}
-			//System.out.println("»ı°å´Âµ¥?");
+			//System.out.println("ìƒê²¼ëŠ”ë°?");
 			resize_label[0].setLocation(x - 4, y - 4);
 			mid_panel.add(resize_label[0]);
 			resize_label[1].setLocation(x + wid/2 - 4, y - 4);
@@ -436,7 +437,7 @@ public class SplitPanel {
 		}
 		
 		public void painting_resize_box(Graphics g) {
-			//¾ÆÂ¥Áõ³ª
+			//ì•„ì§œì¦ë‚˜
 		}
 		
 	}
@@ -507,12 +508,12 @@ public class SplitPanel {
 	        JMenu_Save.addActionListener(new SaveActionListener());
 	        JMenu_Close.addActionListener(new ActionListener(){
 	            public void actionPerformed(ActionEvent arg0){
-	                System.exit(0);//dispose´Â Ã¢ÇÏ³ª¸¸ ´İ±âÀÌ°í exit´Â ¸ğµç Ã¢´İ±âÀÎµ¥ dispose°°Àº °æ¿ì´ÂjframeÀ» »ó¼ÓÇÏ¾ÖµÇ¼­ ÀÏ´Ü exitÀ¸·Î ÇÔ
+	                System.exit(0);//disposeëŠ” ì°½í•˜ë‚˜ë§Œ ë‹«ê¸°ì´ê³  exitëŠ” ëª¨ë“  ì°½ë‹«ê¸°ì¸ë° disposeê°™ì€ ê²½ìš°ëŠ”jframeì„ ìƒì†í•˜ì• ë˜ì„œ ì¼ë‹¨ exitìœ¼ë¡œ í•¨
 	                }
 	            });
 	        f.add(JMenu_New);
 	        f.add(JMenu_Open);
-	        f.addSeparator();//ºĞ¸®¼± »ğÀÔ
+	        f.addSeparator();//ë¶„ë¦¬ì„  ì‚½ì…
 	        f.add(JMenu_Save);
 	        f.add(JMenu_SaveAs);
 	        
@@ -524,196 +525,6 @@ public class SplitPanel {
 			menuBar.add(e);
 			return menuBar;
 		}
-		
-		public class OpenActionListener implements ActionListener {//¿­±â Ã¢¸¸µå´Â ÄÚµå
-			private JFileChooser chooser;
-			JSONParser parser = new JSONParser();
-			public OpenActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent e) {//jsonÆÄÀÏÀ» ºÒ·¯¿À´Â ÄÚµå
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
-				chooser.setFileFilter(filter);
-				int ret = chooser.showOpenDialog(null);
-				String pathName = chooser.getSelectedFile().getPath();//Å¬¸¯ÇÑ°Í °æ·ÎÀúÀå
-				if(ret != JFileChooser.APPROVE_OPTION) {
-					JOptionPane.showMessageDialog(null,"ÆÄÀÏÀ» ¼±ÅÃÇÏÁö ¾Ê¾Ò½À´Ï´Ù", "°æ°í",JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				String filePath = chooser.getSelectedFile().getPath();
-				try {
-					Object obj = parser.parse(new FileReader(pathName));
-					JSONObject jsonObject = (JSONObject) obj;
-					String textarea = (String) jsonObject.get("textarea");//textarea±ÛÀÚ·Î º¯È¯
-					actionOpen actionopen = new actionOpen();
-					actionopen.actionOpen(textarea);
-				}
-				catch (FileNotFoundException e3) {
-					e3.printStackTrace();
-				} catch (IOException e3) {
-					e3.printStackTrace();
-				} catch (ParseException e3) {
-					e3.printStackTrace();
-				}
-			}
-		}
-		public class actionOpen{//ÆÄÀÏ¿¡¼­ ºÒ·¯¿Â ³»¿ë ½ÇÇàÇÏ±â - ±Ùµ¥ ¸¶¿ì½º·Î Å¬¸¯ÇßÀ»¶§ ¿À¸¥ÂÊ¿¡ ¾È¶ä
-			actionOpen(){}
-			public void actionOpen(String textarea){
-				for(JLabel label : jLabel_nodes) {
-					label.setText("");
-					label.setOpaque(false);
-					label.setSize(0, 0);
-				}
-				myDrawPanel.setText(textarea);
-				myDrawPanel.revalidate();
-				myDrawPanel.repaint();
-				jLabel_nodes.clear();
-				node_for_Labels.clear();
-				myTree.getTextPanel(SplitPanel.myDrawPanel.getText());	//tree¿¡ textPanel³»¿ë ³Ñ°ÜÁÖ±â
-				draw_Tree(myTree.root, 0, panel_Mid);
-				recoloring_tree();
-				relocating_tree();
-				panel_Mid.repaint();
-				
-				isNotFirst = true;
-			}
-		}
-		
-	/*	class OpenActionListener implements ActionListener {//ÇöÀç ¸¸µé¾îÁ®ÀÖ´Â ³ëµåµéÀÇ Á¤º¸¸¦ ¹Ş¾Æ´Ù°¡ Æú´õ ¿­±â ÄÚµå
-			private JFileChooser chooser;
-			JSONParser parser = new JSONParser();
-			public OpenActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent e) {
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
-				chooser.setFileFilter(filter);
-				int ret = chooser.showOpenDialog(null);
-				if(ret != JFileChooser.APPROVE_OPTION) {
-					JOptionPane.showMessageDialog(null,"ÆÄÀÏÀ» ¼±ÅÃÇÏÁö ¾Ê¾Ò½À´Ï´Ù", "°æ°í",JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				String filePath = chooser.getSelectedFile().getPath();
-				pack(); // ÀÌ¹ÌÁöÀÇ Å©±â¿¡ ¸ÂÃß¾î ÇÁ·¹ÀÓ Å©±â Á¶Àı
-				try {
-					Object obj = parser.parse(new FileReader("c:\\test2.json"));
-			 
-					JSONObject jsonObject = (JSONObject) obj;
-					
-					String textarea = (String) jsonObject.get("textarea");
-					actionOpen actionopen = new actionOpen();
-					actionopen.actionOpen(textarea);
-				}
-					
-					
-				catch (FileNotFoundException e3) {
-					e3.printStackTrace();
-				} catch (IOException e3) {
-					e3.printStackTrace();
-				} catch (ParseException e3) {
-					e3.printStackTrace();
-			}
-			
-		}
-	}*/
-		class SaveActionListener implements ActionListener{//save-¸Ş´º¹Ù ¸¸µé±â ¿¹Á¦·Î cµå¶óÀÌºê¿¡ »ı¼ºµÊ
-			private JFileChooser chooser;
-			public SaveActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent e) {
-				 JSONObject obj = new JSONObject();
-				    JSONArray list = new JSONArray();
-				    obj.put("textarea", SplitPanel.myDrawPanel.getText());//textarea³»¿ë ÀÚÃ¼ ÀúÀåÄÚµå
-				try {
-					FileWriter file = new FileWriter("C:\\Users\\There\\Desktop\\¸Ş´º¹Ù ¸¸µé±â ¿¹Á¦.json");
-					file.write(obj.toJSONString());
-					file.flush();
-					file.close();
-			 
-				} catch (IOException e2) {
-					e2.printStackTrace();
-				}
-
-			}
-		}
-		
-		
-		class SaveAsActionListener implements ActionListener {//saveas ÀúÀå
-			private JFileChooser chooser;
-			public SaveAsActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent e) {
-				JFrame parentFrame = new JFrame();
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
-				chooser = new JFileChooser();
-				chooser.setFileFilter(filter);
-				chooser.setDialogTitle("Specify a file to save");   
-
-				int userSelection = chooser.showSaveDialog(parentFrame);
-				String pathName = chooser.getSelectedFile().getPath();//Å¬¸¯ÇÑ°Í °æ·ÎÀúÀå
-				if (userSelection == chooser.APPROVE_OPTION) {
-				    File fileToSave = chooser.getSelectedFile();
-				    System.out.println("Save as file: " + fileToSave.getAbsolutePath());//Å¬¶ôÇÑ °æ·Î
-				    JSONObject obj = new JSONObject();
-				    JSONArray list = new JSONArray();
-				    obj.put("textarea", SplitPanel.myDrawPanel.getText());//textarea³»¿ë ÀÚÃ¼ ÀúÀåÄÚµå
-				    try {
-				    	FileWriter file = new FileWriter(fileToSave+".json");//ÀÌ¸§ ÀúÀå
-				    	file.write(obj.toJSONString());
-				   		file.flush();
-				  		file.close();
-				    	  
-				    } catch (IOException e2) {
-				   		e2.printStackTrace();
-				   	}
-				}			
-			    /*for(Node label : SplitPanel.node_for_Labels) {//¶óº§ Á¤º¸µéÀ» ÀúÀåÇÏ´Â ÄÚµå
-			    	String numStr1 = String.valueOf(label.getNodex());
-			    	obj.put(label+"x", numStr1);
-			    	String numStr2 = String.valueOf(label.getNodey());
-			    	obj.put(label+"y", numStr2);
-			    	String numStr3 = String.valueOf(label.getNodehei());
-			    	obj.put(label+"h", numStr3);
-			    	String numStr4 = String.valueOf(label.getNodewid());
-			    	obj.put(label+"w", numStr4);
-			    	String numStr5 = String.valueOf(label.getIndex());
-			    	obj.put(label+"index", numStr5);
-			    	String numStr7 = String.valueOf(label.getLeftChild());
-			    	obj.put(label+"LChil", numStr7);
-			    	String numStr8 = String.valueOf(label.getmyLabel());
-			    	obj.put(label+"MyLabel", numStr8);
-			    	String numStr9 = String.valueOf(label.getNodecolor());
-			    	obj.put(label+"Color", numStr9);
-			    	String numStr10 = String.valueOf(label.getNodeData());
-			    	obj.put(label+"NodeData", numStr10);
-			    	String numStr11 = String.valueOf(label.getParent());
-			    	obj.put(label+"Parent", numStr11);
-			    	String numStr12 = String.valueOf(label.getRightSibling());
-			    	obj.put(label+"RSbling", numStr12);
-			    	
-			    }*/
-			    /*
-			    for(JLabel label : SplitPanel.jLabel_nodes) {
-			    	String numStr13 = String.valueOf(label.);
-			    	obj.add();
-			    	String numStr13 = String.valueOf(label.);
-			    }*/
-			    //String what = SplitPanel.myDrawPanel.getText();	   
-			}
-		}
-		class CloseActionListener extends JFrame implements ActionListener{
-			private JFileChooser chooser;
-			public CloseActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();
-	    	}
-		}
-
 	}
 	
 	class ToolBar {
@@ -725,46 +536,279 @@ public class SplitPanel {
 			 JToolBar tool = new JToolBar("Kitae Menu");
 			 
 		     tool.setBackground(Color.gray);
-		     JButton newbtn = new JButton("»õ·Î ¸¸µé±â");
+		     JButton newbtn = new JButton("ìƒˆë¡œ ë§Œë“¤ê¸°");
 		     tool.add(newbtn);
-		     newbtn.setToolTipText("¸¶ÀÎµå ¸Ê ÆÄÀÏÀ» »õ·Î »ı¼ºÇÕ´Ï´Ù");
+		     newbtn.setToolTipText("ë§ˆì¸ë“œ ë§µ íŒŒì¼ì„ ìƒˆë¡œ ìƒì„±í•©ë‹ˆë‹¤");
 		     tool.addSeparator();
-		     JButton openbtn = new JButton("¿­±â");
+		     JButton openbtn = new JButton("ì—´ê¸°");
 		     tool.add(openbtn);
-		     openbtn.setToolTipText("¸¶ÀÎµå ¸Ê ÆÄÀÏÀ» ºÒ·¯¿É´Ï´Ù");
+		     openbtn.setToolTipText("ë§ˆì¸ë“œ ë§µ íŒŒì¼ì„ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤");
 		     tool.addSeparator();
-		     JButton savebtn = new JButton("ÀúÀå");
+		     JButton savebtn = new JButton("ì €ì¥");
 		     tool.add(savebtn);
-		     savebtn.setToolTipText("ÀÛ¾÷ÇÑ ³»¿ëÀ» ÀúÀåÇÕ´Ï´Ù");
-		     /*JButton btn3=new JButton(new ImageIcon("save.jpg"));//ÀúÀå ÀÌ¹ÌÁöÀÎµ¥ ³»²¨¿¡ ÀÌ¹ÌÁö°¡ ¾ø´ÂÁö ¾È³ªÅ¸³²
+		     savebtn.setToolTipText("ì‘ì—…í•œ ë‚´ìš©ì„ ì €ì¥í•©ë‹ˆë‹¤");
+		     /*JButton btn3=new JButton(new ImageIcon("save.jpg"));//ì €ì¥ ì´ë¯¸ì§€ì¸ë° ë‚´êº¼ì— ì´ë¯¸ì§€ê°€ ì—†ëŠ”ì§€ ì•ˆë‚˜íƒ€ë‚¨
 		     tool.add(btn3);*/
 		     tool.addSeparator();
-		     JButton save_otherbtn = new JButton("´Ù¸¥ ÀÌ¸§À¸·Î ÀúÀå");
+		     JButton save_otherbtn = new JButton("ë‹¤ë¥¸ ì´ë¦„ìœ¼ë¡œ ì €ì¥");
 		     tool.add(save_otherbtn);
-		     save_otherbtn.setToolTipText("ÀÛ¾÷ÇÑ ³»¿ëÀ» »õ·Î¿î ÆÄÀÏ·Î ÀúÀåÇÕ´Ï´Ù");
+		     save_otherbtn.setToolTipText("ì‘ì—…í•œ ë‚´ìš©ì„ ìƒˆë¡œìš´ íŒŒì¼ë¡œ ì €ì¥í•©ë‹ˆë‹¤");
 		     tool.addSeparator();
-		     JButton closebtn = new JButton("´İ±â");
+		     JButton closebtn = new JButton("ë‹«ê¸°");
 		     tool.add(closebtn);
-		     closebtn.setToolTipText("ÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù");
+		     closebtn.setToolTipText("í”„ë¡œê·¸ë¨ì„ ì¢…ë£Œí•©ë‹ˆë‹¤");
 		     tool.addSeparator();
-		     JButton applybtn = new JButton("Àû¿ë");
+		     JButton applybtn = new JButton("ì ìš©");
 		     tool.add(applybtn);
-		     applybtn.setToolTipText("ÅØ½ºÆ® ÆíÁı ³»¿ëÀ» ¸¶ÀÎµå ¸Ê¿¡ Àû¿ëÇÕ´Ï´Ù");
+		     applybtn.setToolTipText("í…ìŠ¤íŠ¸ í¸ì§‘ ë‚´ìš©ì„ ë§ˆì¸ë“œ ë§µì— ì ìš©í•©ë‹ˆë‹¤");
 		     tool.addSeparator();
-		     JButton changebtn = new JButton("º¯°æ");
-		     changebtn.setToolTipText("¼Ó¼º º¯°æ ³»¿ëÀ» ¸¶ÀÎµå ¸Ê¿¡ Àû¿ëÇÕ´Ï´Ù");
+		     JButton changebtn = new JButton("ë³€ê²½");
+		     changebtn.setToolTipText("ì†ì„± ë³€ê²½ ë‚´ìš©ì„ ë§ˆì¸ë“œ ë§µì— ì ìš©í•©ë‹ˆë‹¤");
 		     tool.add(changebtn);
 		     tool.addSeparator();
 
 		     JComboBox<String> combo = new JComboBox<String>();
 		     combo.addItem("click");
-		     combo.addItem("¤Ç");
-		     combo.addItem("¤Ç¤Ç");
-		     combo.addItem("¤Ç¤Ç¤Ç");
+		     combo.addItem("ã…—");
+		     combo.addItem("ã…—ã…—");
+		     combo.addItem("ã…—ã…—ã…—");
 		     tool.add(combo);
 		     
 		     return tool;
 		}
 	}
 
+
+	public class OpenActionListener implements ActionListener {//ì—´ê¸° ì°½ë§Œë“œëŠ” ì½”ë“œ
+		private JFileChooser chooser;
+		JSONParser parser = new JSONParser();
+		public OpenActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent e) {//jsoníŒŒì¼ì„ ë¶ˆëŸ¬ì˜¤ëŠ” ì½”ë“œ
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
+			chooser.setFileFilter(filter);
+			int ret = chooser.showOpenDialog(null);
+			String pathName = chooser.getSelectedFile().getPath();//í´ë¦­í•œê²ƒ ê²½ë¡œì €ì¥
+			if(ret != JFileChooser.APPROVE_OPTION) {
+				JOptionPane.showMessageDialog(null,"íŒŒì¼ì„ ì„ íƒí•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤", "ê²½ê³ ",JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			try {
+				JSONParser parser = new JSONParser(); 
+				JSONArray array = (JSONArray) parser.parse(new FileReader(pathName));
+				actionOpen(array);
+			}
+			catch (FileNotFoundException e3) {
+				e3.printStackTrace();
+			} catch (IOException e3) {
+				e3.printStackTrace();
+			} catch (ParseException e3) {
+				e3.printStackTrace();
+			}
+		}
+		
+		public void actionOpen(JSONArray array){//íŒŒì¼ì—ì„œ ë¶ˆëŸ¬ì˜¨ ë‚´ìš© ì‹¤í–‰í•˜ê¸° - ê·¼ë° ë§ˆìš°ìŠ¤ë¡œ í´ë¦­í–ˆì„ë•Œ ì˜¤ë¥¸ìª½ì— ì•ˆëœ¸
+			if(isNotFirst) {
+	               panel_Mid.removeAll();
+	               panel_Mid.revalidate();
+	               panel_Mid.repaint();
+	            }
+	            jLabel_nodes.clear();
+	            node_for_Labels.clear();
+	            Node root= null;
+			for(int i = 0; i<array.size(); i++) {
+				JSONObject obj = (JSONObject)array.get(i);
+		    	Node new_node = new Node((String)obj.get("NodeData"));
+				/*new_node.setmyLabel((JLabel)obj.get("MyData"));//ë°ì´í„° ë„£ëŠ” ì½”ë“œ ìê¾¸ ë„í¬ì¸í„° ì—ëŸ¬ëœ¸
+				new_node.setIndex((int)obj.get("intdex"));
+				new_node.setNodex((int)obj.get("x"));
+				new_node.setNodey((int)obj.get("y"));
+				new_node.setNodewid((int)obj.get("w"));
+				new_node.setNodehei((int)obj.get("h"));
+				new_node.setNodeColor((Color)obj.get("Color"));
+				new_node.setParent((Node)obj.get("parent"));
+				new_node.setLeftChild((Node)obj.get("LChil"));
+				new_node.setRightSibling((Node)obj.get("RSbling"));*/
+				System.out.println((String)obj.get("NodeData"));
+				System.out.println((JLabel)obj.get("MyData"));
+				System.out.println((int)obj.get("intdex"));
+				System.out.println((int)obj.get("x"));
+				System.out.println((int)obj.get("y"));
+				System.out.println((int)obj.get("h"));
+				System.out.println((int)obj.get("w"));
+				System.out.println((Color)obj.get("Color"));
+				System.out.println(((Node)obj.get("parent")));
+				System.out.println((Node)obj.get("LChil"));
+				System.out.println((Node)obj.get("RSbling"));
+
+				if(i ==0) myTree.root = new_node;
+				}
+			draw_tree2(root, 0, panel_Mid);
+		}
+		public void draw_tree2(Node root, int i, JPanel mid_panel) { 
+			JLabel label = new JLabel(root.getNodeData());
+			//int check = 0, node_x = i*60, node_y = i*60, node_wid = 60, node_hei = 40;
+			Node check_node = root;
+			//label.setSize(node_wid, node_hei);
+			label.setOpaque(true);
+		
+			int random_r, random_g, random_b;
+			random_r = (int)(Math.random() * 256);
+			random_g = (int)(Math.random() * 256);
+			random_b = (int)(Math.random() * 256);
+			Color random_color = new Color(random_r, random_g, random_b);
+			label.setBackground(random_color);
+			//root.setNodeColor(random_color);
+			label.setBorder(new LineBorder(new Color(82, 130, 184), 2));
+			label.setLocation(root.getNodex(), root.getNodey());
+			label.setHorizontalAlignment(SwingConstants.CENTER);
+			panel_Mid.add(label);	//Label ë§ˆì¸ë“œë§µì— ì¶”ê°€
+			jLabel_nodes.add(label);	
+			node_for_Labels.add(root);
+				/*root.setmyLabel(label);
+				root.setIndex(i);
+				root.setNodex(node_x);
+				root.setNodey(node_y);
+				root.setNodewid(node_wid);
+				root.setNodehei(node_hei);
+				 */
+			NodeMouseListener nodeMouse = new NodeMouseListener(label, panel_Mid);
+			label.addMouseListener(nodeMouse);
+       
+				// ìì‹ ë…¸ë“œê°€ ì¡´ì¬í•œë‹¤ë©´
+			if(root.getLeftChild() != null)
+				draw_Tree(root.getLeftChild(), i + 1, panel_Mid);
+	         
+				// í˜•ì œ ë…¸ë“œê°€ ì¡´ì¬í•œë‹¤ë©´
+			if(root.getRightSibling() != null)
+				draw_Tree(root.getRightSibling(), i + 1, panel_Mid);
+			panel_Mid.repaint();
+		}
+    }
+
+	class SaveActionListener implements ActionListener{//save-ë©”ë‰´ë°” ë§Œë“¤ê¸° ì˜ˆì œë¡œ cë“œë¼ì´ë¸Œì— ìƒì„±ë¨
+		private JFileChooser chooser;
+		public SaveActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent e) {
+			 JSONArray list = new JSONArray();
+			    //obj.put("textarea", SplitPanel.myDrawPanel.getText());//textareaë‚´ìš© ìì²´ ì €ì¥ì½”ë“œ
+			    int i = 0;
+			     for(Node label : SplitPanel.node_for_Labels) {//ë¼ë²¨ ì •ë³´ë“¤ì„ ì €ì¥í•˜ëŠ” ì½”ë“œ
+			    	 JSONObject obj = new JSONObject();
+					    String numStr1 = String.valueOf(label.getNodex());
+				    	obj.put("x", numStr1);
+				    	String numStr2 = String.valueOf(label.getNodey());
+				    	obj.put("y", numStr2);
+				    	String numStr3 = String.valueOf(label.getNodehei());
+				    	obj.put("h", numStr3);
+				    	String numStr4 = String.valueOf(label.getNodewid());
+				    	obj.put("w", numStr4);
+				    	String numStr5 = String.valueOf(label.getIndex());
+				    	obj.put("index", numStr5);
+				    	String numStr7 = String.valueOf(label.getLeftChild());
+				    	obj.put("LChil", numStr7);
+				    	String numStr8 = String.valueOf(label.getmyLabel());
+				    	obj.put("MyLabel", numStr8);
+				    	String numStr9 = String.valueOf(label.getNodecolor());
+				    	obj.put("Color", numStr9);
+				    	String numStr10 = String.valueOf(label.getNodeData());
+				    	obj.put("NodeData", numStr10);
+				    	String numStr11 = String.valueOf(label.getParent());
+				    	obj.put("Parent", numStr11);
+				    	String numStr12 = String.valueOf(label.getRightSibling());
+				    	obj.put("RSbling", numStr12);
+				    	list.add(obj);
+			      }
+			try {
+				FileWriter file = new FileWriter("C:\\Users\\There\\Desktop\\ë©”ë‰´ë°” ë§Œë“¤ê¸° ì˜ˆì œ.json");
+				file.write(list.toJSONString());
+				file.flush();
+				file.close();
+		 
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+
+		}
+	}
+	
+	
+	class SaveAsActionListener implements ActionListener {//saveas ì €ì¥
+		private JFileChooser chooser;
+		public SaveAsActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent e) {
+			JFrame parentFrame = new JFrame();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
+			chooser = new JFileChooser();
+			chooser.setFileFilter(filter);
+			chooser.setDialogTitle("Specify a file to save");   
+
+			int userSelection = chooser.showSaveDialog(parentFrame);
+			String pathName = chooser.getSelectedFile().getPath();//í´ë¦­í•œê²ƒ ê²½ë¡œì €ì¥
+			if (userSelection == chooser.APPROVE_OPTION) {
+			    File fileToSave = chooser.getSelectedFile();
+			    System.out.println("Save as file: " + fileToSave.getAbsolutePath());//í´ë½í•œ ê²½ë¡œ
+			    JSONArray list = new JSONArray();
+			    //obj.put("textarea", SplitPanel.myDrawPanel.getText());//textareaë‚´ìš© ìì²´ ì €ì¥ì½”ë“œ
+			     for(Node label : SplitPanel.node_for_Labels) {//ë¼ë²¨ ì •ë³´ë“¤ì„ ì €ì¥í•˜ëŠ” ì½”ë“œ
+					JSONObject obj = new JSONObject();
+				    String numStr1 = String.valueOf(label.getNodex());
+			    	obj.put("x", numStr1);
+			    	String numStr2 = String.valueOf(label.getNodey());
+			    	obj.put("y", numStr2);
+			    	String numStr3 = String.valueOf(label.getNodehei());
+			    	obj.put("h", numStr3);
+			    	String numStr4 = String.valueOf(label.getNodewid());
+			    	obj.put("w", numStr4);
+			    	String numStr5 = String.valueOf(label.getIndex());
+			    	obj.put("index", numStr5);
+			    	String numStr7 = String.valueOf(label.getLeftChild());
+			    	obj.put("LChil", numStr7);
+			    	String numStr8 = String.valueOf(label.getmyLabel());
+			    	obj.put("MyLabel", numStr8);
+			    	String numStr9 = String.valueOf(label.getNodecolor());
+			    	obj.put("Color", numStr9);
+			    	String numStr10 = String.valueOf(label.getNodeData());
+			    	obj.put("NodeData", numStr10);
+			    	String numStr11 = String.valueOf(label.getParent());
+			    	obj.put("Parent", numStr11);
+			    	String numStr12 = String.valueOf(label.getRightSibling());
+			    	obj.put("RSbling", numStr12);
+			    	list.add(obj+"i");
+			      }
+		    /*
+		    for(JLabel label : SplitPanel.jLabel_nodes) {
+		    	String numStr13 = String.valueOf(label.);
+		    	obj.add();
+		    	String numStr13 = String.valueOf(label.);
+		    }*/
+		    //String what = SplitPanel.myDrawPanel.getText();
+		     try {
+		      FileWriter file = new FileWriter(fileToSave+".json");//ì´ë¦„ ì €ì¥
+		      	file.write(list.toJSONString());
+		   		file.flush();
+		  		file.close();
+		  		System.out.println(list);
+			}catch (IOException e2) {
+		   		e2.printStackTrace();
+		   	}
+			 
+		}
+	}
+	}
+	class CloseActionListener extends JFrame implements ActionListener{
+		private JFileChooser chooser;
+		public CloseActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent arg0) {
+			dispose();
+    	}
+	}
+}
 }
