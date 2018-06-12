@@ -1,6 +1,7 @@
 package project;
 
 import java.awt.*;
+import java.awt.color.*;
 
 import java.awt.List;
 import java.util.*;
@@ -23,6 +24,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.json.simple.*;
 
 
 public class SplitPanel {
@@ -130,8 +132,8 @@ public class SplitPanel {
 		panel_Right.add(button_attr);		
 		//panel_Right.add(node_colorfield);
 		panel_Right.setLayout(gridAttPane);
-		
-		/*ActionListener AttrButtonActionListener = new ActionListener() {
+		/*
+		ActionListener AttrButtonActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
 				make_JLabelArray(myTree.node_count);
@@ -139,8 +141,7 @@ public class SplitPanel {
 				panel_Mid.repaint();
 			}
 		};
-	    textbutton.addActionListener(AttrButtonActionListener);	//Action 리스*///만드는중
-		
+	    textbutton.addActionListener(AttrButtonActionListener);	//Action 리스만드는중*/
 		
 		//틀에 스플릿 추가
 		split.setLeftComponent(panel_Left_Background);
@@ -403,196 +404,6 @@ public class SplitPanel {
 			menuBar.add(e);
 			return menuBar;
 		}
-		
-		public class OpenActionListener implements ActionListener {//열기 창만드는 코드
-			private JFileChooser chooser;
-			JSONParser parser = new JSONParser();
-			public OpenActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent e) {//json파일을 불러오는 코드
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
-				chooser.setFileFilter(filter);
-				int ret = chooser.showOpenDialog(null);
-				String pathName = chooser.getSelectedFile().getPath();//클릭한것 경로저장
-				if(ret != JFileChooser.APPROVE_OPTION) {
-					JOptionPane.showMessageDialog(null,"파일을 선택하지 않았습니다", "경고",JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				String filePath = chooser.getSelectedFile().getPath();
-				try {
-					Object obj = parser.parse(new FileReader(pathName));
-					JSONObject jsonObject = (JSONObject) obj;
-					String textarea = (String) jsonObject.get("textarea");//textarea글자로 변환
-					actionOpen actionopen = new actionOpen();
-					actionopen.actionOpen(textarea);
-				}
-				catch (FileNotFoundException e3) {
-					e3.printStackTrace();
-				} catch (IOException e3) {
-					e3.printStackTrace();
-				} catch (ParseException e3) {
-					e3.printStackTrace();
-				}
-			}
-		}
-		public class actionOpen{//파일에서 불러온 내용 실행하기 - 근데 마우스로 클릭했을때 오른쪽에 안뜸
-			actionOpen(){}
-			public void actionOpen(String textarea){
-				for(JLabel label : jLabel_nodes) {
-					label.setText("");
-					label.setOpaque(false);
-					label.setSize(0, 0);
-				}
-				myDrawPanel.setText(textarea);
-				myDrawPanel.revalidate();
-				myDrawPanel.repaint();
-				jLabel_nodes.clear();
-				node_for_Labels.clear();
-				myTree.getTextPanel(SplitPanel.myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
-				draw_Tree(myTree.root, 0, panel_Mid);
-				recoloring_tree();
-				relocating_tree();
-				panel_Mid.repaint();
-				
-				isNotFirst = true;
-			}
-		}
-		
-	/*	class OpenActionListener implements ActionListener {//현재 만들어져있는 노드들의 정보를 받아다가 폴더 열기 코드
-			private JFileChooser chooser;
-			JSONParser parser = new JSONParser();
-			public OpenActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent e) {
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
-				chooser.setFileFilter(filter);
-				int ret = chooser.showOpenDialog(null);
-				if(ret != JFileChooser.APPROVE_OPTION) {
-					JOptionPane.showMessageDialog(null,"파일을 선택하지 않았습니다", "경고",JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				String filePath = chooser.getSelectedFile().getPath();
-				pack(); // 이미지의 크기에 맞추어 프레임 크기 조절
-				try {
-					Object obj = parser.parse(new FileReader("c:\\test2.json"));
-			 
-					JSONObject jsonObject = (JSONObject) obj;
-					
-					String textarea = (String) jsonObject.get("textarea");
-					actionOpen actionopen = new actionOpen();
-					actionopen.actionOpen(textarea);
-				}
-					
-					
-				catch (FileNotFoundException e3) {
-					e3.printStackTrace();
-				} catch (IOException e3) {
-					e3.printStackTrace();
-				} catch (ParseException e3) {
-					e3.printStackTrace();
-			}
-			
-		}
-	}*/
-		class SaveActionListener implements ActionListener{//save-메뉴바 만들기 예제로 c드라이브에 생성됨
-			private JFileChooser chooser;
-			public SaveActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent e) {
-				 JSONObject obj = new JSONObject();
-				    JSONArray list = new JSONArray();
-				    obj.put("textarea", SplitPanel.myDrawPanel.getText());//textarea내용 자체 저장코드
-				try {
-					FileWriter file = new FileWriter("C:\\Users\\There\\Desktop\\메뉴바 만들기 예제.json");
-					file.write(obj.toJSONString());
-					file.flush();
-					file.close();
-			 
-				} catch (IOException e2) {
-					e2.printStackTrace();
-				}
-
-			}
-		}
-		
-		
-		class SaveAsActionListener implements ActionListener {//saveas 저장
-			private JFileChooser chooser;
-			public SaveAsActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent e) {
-				JFrame parentFrame = new JFrame();
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
-				chooser = new JFileChooser();
-				chooser.setFileFilter(filter);
-				chooser.setDialogTitle("Specify a file to save");   
-
-				int userSelection = chooser.showSaveDialog(parentFrame);
-				String pathName = chooser.getSelectedFile().getPath();//클릭한것 경로저장
-				if (userSelection == chooser.APPROVE_OPTION) {
-				    File fileToSave = chooser.getSelectedFile();
-				    System.out.println("Save as file: " + fileToSave.getAbsolutePath());//클락한 경로
-				    JSONObject obj = new JSONObject();
-				    JSONArray list = new JSONArray();
-				    obj.put("textarea", SplitPanel.myDrawPanel.getText());//textarea내용 자체 저장코드
-				    try {
-				    	FileWriter file = new FileWriter(fileToSave+".json");//이름 저장
-				    	file.write(obj.toJSONString());
-				   		file.flush();
-				  		file.close();
-				    	  
-				    } catch (IOException e2) {
-				   		e2.printStackTrace();
-				   	}
-				}			
-			    /*for(Node label : SplitPanel.node_for_Labels) {//라벨 정보들을 저장하는 코드
-			    	String numStr1 = String.valueOf(label.getNodex());
-			    	obj.put(label+"x", numStr1);
-			    	String numStr2 = String.valueOf(label.getNodey());
-			    	obj.put(label+"y", numStr2);
-			    	String numStr3 = String.valueOf(label.getNodehei());
-			    	obj.put(label+"h", numStr3);
-			    	String numStr4 = String.valueOf(label.getNodewid());
-			    	obj.put(label+"w", numStr4);
-			    	String numStr5 = String.valueOf(label.getIndex());
-			    	obj.put(label+"index", numStr5);
-			    	String numStr7 = String.valueOf(label.getLeftChild());
-			    	obj.put(label+"LChil", numStr7);
-			    	String numStr8 = String.valueOf(label.getmyLabel());
-			    	obj.put(label+"MyLabel", numStr8);
-			    	String numStr9 = String.valueOf(label.getNodecolor());
-			    	obj.put(label+"Color", numStr9);
-			    	String numStr10 = String.valueOf(label.getNodeData());
-			    	obj.put(label+"NodeData", numStr10);
-			    	String numStr11 = String.valueOf(label.getParent());
-			    	obj.put(label+"Parent", numStr11);
-			    	String numStr12 = String.valueOf(label.getRightSibling());
-			    	obj.put(label+"RSbling", numStr12);
-			    	
-			    }*/
-			    /*
-			    for(JLabel label : SplitPanel.jLabel_nodes) {
-			    	String numStr13 = String.valueOf(label.);
-			    	obj.add();
-			    	String numStr13 = String.valueOf(label.);
-			    }*/
-			    //String what = SplitPanel.myDrawPanel.getText();	   
-			}
-		}
-		class CloseActionListener extends JFrame implements ActionListener{
-			private JFileChooser chooser;
-			public CloseActionListener() {
-				chooser = new JFileChooser();
-			}
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();
-	    	}
-		}
-
 	}
 	
 	class ToolBar {
@@ -646,6 +457,235 @@ public class SplitPanel {
 		}
 	}
 
+	public class OpenActionListener implements ActionListener {//열기 창만드는 코드
+		private JFileChooser chooser;
+		JSONParser parser = new JSONParser();
+		public OpenActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent e) {//json파일을 불러오는 코드
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
+			chooser.setFileFilter(filter);
+			int ret = chooser.showOpenDialog(null);
+			String pathName = chooser.getSelectedFile().getPath();//클릭한것 경로저장
+			if(ret != JFileChooser.APPROVE_OPTION) {
+				JOptionPane.showMessageDialog(null,"파일을 선택하지 않았습니다", "경고",JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			try {
+				JSONParser parser = new JSONParser(); 
+				JSONArray array = (JSONArray) parser.parse(new FileReader(pathName));
+				actionOpen(array);
+			}
+			catch (FileNotFoundException e3) {
+				e3.printStackTrace();
+			} catch (IOException e3) {
+				e3.printStackTrace();
+			} catch (ParseException e3) {
+				e3.printStackTrace();
+			}
+		}
+		
+		public void actionOpen(JSONArray array){//파일에서 불러온 내용 실행하기 - 근데 마우스로 클릭했을때 오른쪽에 안뜸
+			if(isNotFirst) {
+	               panel_Mid.removeAll();
+	               panel_Mid.revalidate();
+	               panel_Mid.repaint();
+	            }
+	            jLabel_nodes.clear();
+	            node_for_Labels.clear();
+	            Node root= null;
+			for(int i = 0; i<array.size(); i++) {
+				JSONObject obj = (JSONObject)array.get(i);
+		    	Node new_node = new Node((String)obj.get("NodeData"));
+				/*new_node.setmyLabel((JLabel)obj.get("MyData"));//데이터 넣는 코드 자꾸 널포인터 에러뜸
+				new_node.setIndex((int)obj.get("intdex"));
+				new_node.setNodex((int)obj.get("x"));
+				new_node.setNodey((int)obj.get("y"));
+				new_node.setNodewid((int)obj.get("w"));
+				new_node.setNodehei((int)obj.get("h"));
+				new_node.setNodeColor((Color)obj.get("Color"));
+				new_node.setParent((Node)obj.get("parent"));
+				new_node.setLeftChild((Node)obj.get("LChil"));
+				new_node.setRightSibling((Node)obj.get("RSbling"));*/
+				System.out.println((String)obj.get("NodeData"));
+				System.out.println((JLabel)obj.get("MyData"));
+				System.out.println((int)obj.get("intdex"));
+				System.out.println((int)obj.get("x"));
+				System.out.println((int)obj.get("y"));
+				System.out.println((int)obj.get("h"));
+				System.out.println((int)obj.get("w"));
+				System.out.println((Color)obj.get("Color"));
+				System.out.println(((Node)obj.get("parent")));
+				System.out.println((Node)obj.get("LChil"));
+				System.out.println((Node)obj.get("RSbling"));
 
+				if(i ==0) myTree.root = new_node;
+				}
+			draw_tree2(root, 0, panel_Mid);
+		}
+		public void draw_tree2(Node root, int i, JPanel mid_panel) { 
+			JLabel label = new JLabel(root.getNodeData());
+			//int check = 0, node_x = i*60, node_y = i*60, node_wid = 60, node_hei = 40;
+			Node check_node = root;
+			//label.setSize(node_wid, node_hei);
+			label.setOpaque(true);
+		
+			int random_r, random_g, random_b;
+			random_r = (int)(Math.random() * 256);
+			random_g = (int)(Math.random() * 256);
+			random_b = (int)(Math.random() * 256);
+			Color random_color = new Color(random_r, random_g, random_b);
+			label.setBackground(random_color);
+			//root.setNodeColor(random_color);
+			label.setBorder(new LineBorder(new Color(82, 130, 184), 2));
+			label.setLocation(root.getNodex(), root.getNodey());
+			label.setHorizontalAlignment(SwingConstants.CENTER);
+			panel_Mid.add(label);	//Label 마인드맵에 추가
+			jLabel_nodes.add(label);	
+			node_for_Labels.add(root);
+				/*root.setmyLabel(label);
+				root.setIndex(i);
+				root.setNodex(node_x);
+				root.setNodey(node_y);
+				root.setNodewid(node_wid);
+				root.setNodehei(node_hei);
+				 */
+			NodeMouseListener nodeMouse = new NodeMouseListener(label, panel_Mid);
+			label.addMouseListener(nodeMouse);
+       
+				// 자식 노드가 존재한다면
+			if(root.getLeftChild() != null)
+				draw_Tree(root.getLeftChild(), i + 1, panel_Mid);
+	         
+				// 형제 노드가 존재한다면
+			if(root.getRightSibling() != null)
+				draw_Tree(root.getRightSibling(), i + 1, panel_Mid);
+			panel_Mid.repaint();
+		}
+    }
 
+	class SaveActionListener implements ActionListener{//save-메뉴바 만들기 예제로 c드라이브에 생성됨
+		private JFileChooser chooser;
+		public SaveActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent e) {
+			 JSONArray list = new JSONArray();
+			    //obj.put("textarea", SplitPanel.myDrawPanel.getText());//textarea내용 자체 저장코드
+			    int i = 0;
+			     for(Node label : SplitPanel.node_for_Labels) {//라벨 정보들을 저장하는 코드
+			    	 JSONObject obj = new JSONObject();
+					    String numStr1 = String.valueOf(label.getNodex());
+				    	obj.put("x", numStr1);
+				    	String numStr2 = String.valueOf(label.getNodey());
+				    	obj.put("y", numStr2);
+				    	String numStr3 = String.valueOf(label.getNodehei());
+				    	obj.put("h", numStr3);
+				    	String numStr4 = String.valueOf(label.getNodewid());
+				    	obj.put("w", numStr4);
+				    	String numStr5 = String.valueOf(label.getIndex());
+				    	obj.put("index", numStr5);
+				    	String numStr7 = String.valueOf(label.getLeftChild());
+				    	obj.put("LChil", numStr7);
+				    	String numStr8 = String.valueOf(label.getmyLabel());
+				    	obj.put("MyLabel", numStr8);
+				    	String numStr9 = String.valueOf(label.getNodecolor());
+				    	obj.put("Color", numStr9);
+				    	String numStr10 = String.valueOf(label.getNodeData());
+				    	obj.put("NodeData", numStr10);
+				    	String numStr11 = String.valueOf(label.getParent());
+				    	obj.put("Parent", numStr11);
+				    	String numStr12 = String.valueOf(label.getRightSibling());
+				    	obj.put("RSbling", numStr12);
+				    	list.add(obj);
+			      }
+			try {
+				FileWriter file = new FileWriter("C:\\Users\\There\\Desktop\\메뉴바 만들기 예제.json");
+				file.write(list.toJSONString());
+				file.flush();
+				file.close();
+		 
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+
+		}
+	}
+	
+	
+	class SaveAsActionListener implements ActionListener {//saveas 저장
+		private JFileChooser chooser;
+		public SaveAsActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent e) {
+			JFrame parentFrame = new JFrame();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
+			chooser = new JFileChooser();
+			chooser.setFileFilter(filter);
+			chooser.setDialogTitle("Specify a file to save");   
+
+			int userSelection = chooser.showSaveDialog(parentFrame);
+			String pathName = chooser.getSelectedFile().getPath();//클릭한것 경로저장
+			if (userSelection == chooser.APPROVE_OPTION) {
+			    File fileToSave = chooser.getSelectedFile();
+			    System.out.println("Save as file: " + fileToSave.getAbsolutePath());//클락한 경로
+			    JSONArray list = new JSONArray();
+			    //obj.put("textarea", SplitPanel.myDrawPanel.getText());//textarea내용 자체 저장코드
+			     for(Node label : SplitPanel.node_for_Labels) {//라벨 정보들을 저장하는 코드
+					JSONObject obj = new JSONObject();
+				    String numStr1 = String.valueOf(label.getNodex());
+			    	obj.put("x", numStr1);
+			    	String numStr2 = String.valueOf(label.getNodey());
+			    	obj.put("y", numStr2);
+			    	String numStr3 = String.valueOf(label.getNodehei());
+			    	obj.put("h", numStr3);
+			    	String numStr4 = String.valueOf(label.getNodewid());
+			    	obj.put("w", numStr4);
+			    	String numStr5 = String.valueOf(label.getIndex());
+			    	obj.put("index", numStr5);
+			    	String numStr7 = String.valueOf(label.getLeftChild());
+			    	obj.put("LChil", numStr7);
+			    	String numStr8 = String.valueOf(label.getmyLabel());
+			    	obj.put("MyLabel", numStr8);
+			    	String numStr9 = String.valueOf(label.getNodecolor());
+			    	obj.put("Color", numStr9);
+			    	String numStr10 = String.valueOf(label.getNodeData());
+			    	obj.put("NodeData", numStr10);
+			    	String numStr11 = String.valueOf(label.getParent());
+			    	obj.put("Parent", numStr11);
+			    	String numStr12 = String.valueOf(label.getRightSibling());
+			    	obj.put("RSbling", numStr12);
+			    	list.add(obj+"i");
+			      }
+		    /*
+		    for(JLabel label : SplitPanel.jLabel_nodes) {
+		    	String numStr13 = String.valueOf(label.);
+		    	obj.add();
+		    	String numStr13 = String.valueOf(label.);
+		    }*/
+		    //String what = SplitPanel.myDrawPanel.getText();
+		     try {
+		      FileWriter file = new FileWriter(fileToSave+".json");//이름 저장
+		      	file.write(list.toJSONString());
+		   		file.flush();
+		  		file.close();
+		  		System.out.println(list);
+			}catch (IOException e2) {
+		   		e2.printStackTrace();
+		   	}
+			 
+		}
+	}
+	}
+	class CloseActionListener extends JFrame implements ActionListener{
+		private JFileChooser chooser;
+		public CloseActionListener() {
+			chooser = new JFileChooser();
+		}
+		public void actionPerformed(ActionEvent arg0) {
+			dispose();
+    	}
+	}
 }
