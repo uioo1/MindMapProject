@@ -27,7 +27,7 @@ import org.json.simple.parser.ParseException;
 import org.json.simple.*;
 
 
-public class SplitPanel {
+public class SplitPanel extends JPanel{
 	MenuBar menubar = new MenuBar();	
 	ToolBar toolbar = new ToolBar();
 	public static JPanel panel_Mid;	//가운데 마인드맵패널 정의
@@ -52,8 +52,8 @@ public class SplitPanel {
 	JLabel before_resize_label[] = new JLabel[8];
 	Rectangle[] resize_box = new Rectangle[8];
 	boolean isNotFirst = false;
-	boolean isSameLabel = false;
 	boolean isReversed = false;
+	boolean isDragged = false;
 	
 	
 	public SplitPanel() {
@@ -144,7 +144,6 @@ public class SplitPanel {
 		split2.setLeftComponent(panel_Mid);		
 		split2.setRightComponent(panel_Right);
 		
-		
 	}
 	
 	public JSplitPane splitpane_create() {        
@@ -183,6 +182,7 @@ public class SplitPanel {
 		
 		NodeMouseListener nodeMouse = new NodeMouseListener(label, mid_panel);
 		label.addMouseListener(nodeMouse);
+		label.addMouseMotionListener(nodeMouse);
        
 		// 자식 노드가 존재한다면
 	    if(root.getLeftChild() != null)
@@ -250,6 +250,50 @@ public class SplitPanel {
 		}
 		 
 		public void mouseDragged(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
+			int label_x = label.getX();
+			int label_y = label.getY();
+			System.out.println("x : " + x + " y: " + y);
+			
+			myNode.setNodex(label_x + x - before_x);
+			myNode.setNodey(label_y + y - before_y);
+			node_xfield.setText(Integer.toString(label_x + x - before_x));			
+			node_yfield.setText(Integer.toString(label_y + y - before_y));			
+			label.setLocation(label_x + x - before_x, label_y + y - before_y);
+			
+			
+			if(before_click_label == null) {	//맨처음
+				removing_now_resize_label();
+				locating_resize_label(label_x + x - before_x, label_y + y - before_y);
+				isReversed = true;
+			}
+			else if(isReversed == false) {
+				if(before_click_label == label) {
+					removing_now_resize_label();
+					locating_resize_label(label_x + x - before_x, label_y + y - before_y);
+					isReversed = true;
+				}
+				else {
+					removing_now_resize_label();
+					locating_resize_label(label_x + x - before_x, label_y + y - before_y);
+					isReversed = true;
+				}
+			}
+			else if(isReversed == true) {
+				if(before_click_label == label) {
+					removing_now_resize_label();
+					locating_resize_label(label_x + x - before_x, label_y + y - before_y);
+					isReversed = true;
+				}
+				else {
+					removing_now_resize_label();
+					locating_resize_label(label_x + x - before_x, label_y + y - before_y);
+					isReversed = true;
+				}
+			}
+			
+			isDragged = true;
 		}
 
 		public void mouseMoved(MouseEvent e) {
@@ -277,10 +321,16 @@ public class SplitPanel {
 			locating_resize_label(myNode.getNodex(), myNode.getNodey());
 			
 			if(before_click_label == null) {	//맨처음
-				resize_box[0] = new Rectangle(50, 50, 100, 100);
+				//resize_box[0] = new Rectangle(50, 50, 100, 100);
+				reversing_node();
 			}
 			else if(isReversed == false) {
-				
+				if(before_click_label == label) {
+					reversing_node();
+				}
+				else {
+					reversing_node();
+				}
 			}
 			else if(isReversed == true) {
 				if(before_click_label == label) {
@@ -289,6 +339,7 @@ public class SplitPanel {
 				else {
 					node_back_again();
 					removing_before_resize_label();
+					reversing_node();
 				}
 			}			
 			
@@ -307,29 +358,24 @@ public class SplitPanel {
 			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
 			
 			if(before_click_label == null) {	//맨처음
-				reversing_node();
 				isReversed = true;
 			}
 			else if(isReversed == false) {
 				if(before_click_label == label) {
-					if(now_x == before_x && now_y == before_y) {
-						reversing_node();
+					if(isDragged == false) {
 						isReversed = true;
 					}
 					else {
-						reversing_node();
 						removing_now_resize_label();
 						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
 						isReversed = true;
 					}
 				}
 				else {
-					if(now_x == before_x && now_y == before_y) {
-						reversing_node();
+					if(isDragged == false) {
 						isReversed = true;
 					}
 					else {
-						reversing_node();
 						removing_now_resize_label();
 						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
 						isReversed = true;
@@ -338,7 +384,7 @@ public class SplitPanel {
 			}
 			else if(isReversed == true) {
 				if(before_click_label == label) {
-					if(now_x == before_x && now_y == before_y) {
+					if(isDragged == false) {
 						reversing_node();
 						removing_now_resize_label();
 						isReversed = false;
@@ -350,12 +396,10 @@ public class SplitPanel {
 					}
 				}
 				else {
-					if(now_x == before_x && now_y == before_y) {
-						reversing_node();
+					if(isDragged == false) {
 						isReversed = true;
 					}
 					else {
-						reversing_node();
 						removing_now_resize_label();
 						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
 						isReversed = true;
@@ -368,8 +412,9 @@ public class SplitPanel {
 			for(int i = 0; i < resize_label.length; i++) {
 				before_resize_label[i] = resize_label[i];
 			}
-			before_click_label = label;	
 			
+			before_click_label = label;	
+			isDragged = false;
 		}
 		
 		public void reversing_node() {
@@ -437,7 +482,7 @@ public class SplitPanel {
 		}
 		
 		public void painting_resize_box(Graphics g) {
-			//아짜증나
+			
 		}
 		
 	}
@@ -810,5 +855,4 @@ public class SplitPanel {
 			dispose();
     	}
 	}
-}
 }
