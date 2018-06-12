@@ -436,7 +436,7 @@ public class SplitPanel {
 		}
 		
 		public void painting_resize_box(Graphics g) {
-			
+			//아짜증나
 		}
 		
 	}
