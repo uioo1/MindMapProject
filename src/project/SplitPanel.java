@@ -48,6 +48,7 @@ public class SplitPanel {
 	JLabel before_click_label = null;
 	JLabel resize_label[] = new JLabel[8];
 	JLabel before_resize_label[] = new JLabel[8];
+	Rectangle[] resize_box = new Rectangle[8];
 	boolean isNotFirst = false;
 	boolean isSameLabel = false;
 	boolean isReversed = false;
@@ -132,18 +133,7 @@ public class SplitPanel {
 		
 		JButton button_attr = new JButton("변경");
 		panel_Right.add(button_attr);		
-		//panel_Right.add(node_colorfield);
 		panel_Right.setLayout(gridAttPane);
-		
-		/*ActionListener AttrButtonActionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
-				make_JLabelArray(myTree.node_count);
-				draw_Tree(myTree.root, 0, panel_Mid);
-				panel_Mid.repaint();
-			}
-		};
-	    textbutton.addActionListener(AttrButtonActionListener);	//Action 리스*///만드는중
 		
 		
 		//틀에 스플릿 추가
@@ -286,6 +276,7 @@ public class SplitPanel {
 			locating_resize_label(myNode.getNodex(), myNode.getNodey());
 			
 			if(before_click_label == null) {	//맨처음
+				resize_box[0] = new Rectangle(50, 50, 100, 100);
 			}
 			else if(isReversed == false) {
 				
@@ -442,6 +433,10 @@ public class SplitPanel {
 					mid_panel.remove(resize_label[i]);
 				}
 			}
+		}
+		
+		public void painting_resize_box(Graphics g) {
+			
 		}
 		
 	}
