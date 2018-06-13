@@ -55,7 +55,6 @@ public class SplitPanel extends JFrame{
 	JLabel before_click_label = null;
 	JLabel resize_label[] = new JLabel[8];
 	JLabel before_resize_label[] = new JLabel[8];
-	boolean isNotFirst = false;
 	boolean isReversed = false;
 	boolean isDragged = false;
 	
@@ -70,6 +69,7 @@ public class SplitPanel extends JFrame{
         panel_Mid.setBackground(new Color(163, 202, 241));
         panel_Mid.setLayout(null);
         panel_Mid.addMouseListener(new MindMapPanelMouseListener());
+        panel_Mid.setDoubleBuffered(true);
         split2.setBackground(new Color(100, 100, 100));
         
         
@@ -374,6 +374,7 @@ public class SplitPanel extends JFrame{
 				}
 			}
 			
+			painting_resize_box();
 			isDragged = true;
 		}
 
@@ -461,6 +462,7 @@ public class SplitPanel extends JFrame{
 				}
 			}			
 			
+			painting_resize_box();
 		}
 
 		public void mouseReleased(MouseEvent e) {
@@ -468,12 +470,19 @@ public class SplitPanel extends JFrame{
 			int now_y = e.getY();
 			int label_x = label.getX();
 			int label_y = label.getY();
-			myNode.setNodex(label_x + (now_x - before_x));
-			myNode.setNodey(label_y + (now_y - before_y));
-			node_xfield.setText(Integer.toString(label_x + (now_x - before_x)));			
-			node_yfield.setText(Integer.toString(label_y + (now_y - before_y)));
+			int real_x = label_x + (now_x - before_x);
+			if(real_x < 0)
+				real_x = 0;
+			int real_y = label_y + (now_y - before_y);
+			if(real_y < 0)
+				real_y = 0;
 			
-			label.setLocation(label_x + (now_x - before_x), label_y + (now_y - before_y));
+			myNode.setNodex(real_x);
+			myNode.setNodey(label_y + (now_y - before_y));
+			node_xfield.setText(Integer.toString(real_x));			
+			node_yfield.setText(Integer.toString(real_y));
+			
+			label.setLocation(real_x, real_y);
 			
 			if(before_click_label == null) {	//맨처음
 				isReversed = true;
@@ -485,7 +494,7 @@ public class SplitPanel extends JFrame{
 					}
 					else {
 						removing_now_resize_label();
-						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
+						locating_resize_label(real_x, real_y);
 						isReversed = true;
 					}
 				}
@@ -495,7 +504,7 @@ public class SplitPanel extends JFrame{
 					}
 					else {
 						removing_now_resize_label();
-						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
+						locating_resize_label(real_x, real_y);
 						isReversed = true;
 					}
 				}
@@ -509,7 +518,7 @@ public class SplitPanel extends JFrame{
 					}
 					else {
 						removing_now_resize_label();
-						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
+						locating_resize_label(real_x, real_y);
 						isReversed = true;
 					}
 				}
@@ -519,13 +528,14 @@ public class SplitPanel extends JFrame{
 					}
 					else {
 						removing_now_resize_label();
-						locating_resize_label(label_x + (now_x - before_x), label_y + (now_y - before_y));
+						locating_resize_label(real_x, real_y);
 						isReversed = true;
 					}					
 				}
 			}
 			
-			mid_panel.repaint();		
+			//mid_panel.repaint();
+			painting_resize_box();
 			
 			for(int i = 0; i < resize_label.length; i++) {
 				before_resize_label[i] = resize_label[i];
@@ -601,6 +611,7 @@ public class SplitPanel extends JFrame{
 		Graphics g = panel_Mid.getGraphics();
 		panel_Mid.paint(g);
 		g.drawRect(50, 50, 6, 6);
+		g.drawLine(myTree.root.getNodex(), myTree.root.getNodey(), myTree.root.getLeftChild().getNodex(), myTree.root.getLeftChild().getNodey());
 	}
 	
 	public void locating_resize_label(int real_x, int real_y) {
@@ -653,14 +664,16 @@ public class SplitPanel extends JFrame{
 		}
 	}
 	
+	public void update(Graphics g) {
+		paint(g);
+	}
+	
 	ActionListener TextPanelActionListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			myTree = new Tree();
-			if(isNotFirst) {
-				panel_Mid.removeAll();
-				panel_Mid.revalidate();
-				panel_Mid.repaint();
-			}
+			panel_Mid.removeAll();
+			panel_Mid.revalidate();
+			panel_Mid.repaint();
 			jLabel_nodes.clear();
 			node_for_Labels.clear();
 			myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
@@ -669,7 +682,6 @@ public class SplitPanel extends JFrame{
 			relocating_tree(myTree.root);
 			panel_Mid.repaint();
 			before_click_label = null;
-			isNotFirst = true;
 		}
 	};
 	
@@ -678,8 +690,12 @@ public class SplitPanel extends JFrame{
 			if(before_click_label != null && isReversed == true) {
 				Node myNode = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
 				String [] colors = splitByLength(node_colorfield.getText(), 2);
-				int x = Integer.parseInt(node_xfield.getText()); 
+				int x = Integer.parseInt(node_xfield.getText());
+				if(x < 0)
+					x = 0;
 				int y = Integer.parseInt(node_yfield.getText());
+				if(y < 0)
+					y = 0;
 				int wid = Integer.parseInt(node_widfield.getText());
 				int hei = Integer.parseInt(node_heifield.getText());
 				
@@ -708,6 +724,7 @@ public class SplitPanel extends JFrame{
 		}
 
 		public void mouseClicked(MouseEvent arg0) {
+			painting_resize_box();
 		}
 
 		public void mouseEntered(MouseEvent arg0) {	
@@ -717,6 +734,7 @@ public class SplitPanel extends JFrame{
 		}
 
 		public void mousePressed(MouseEvent arg0) {	
+			painting_resize_box();
 		}
 
 		public void mouseReleased(MouseEvent arg0) {
@@ -726,6 +744,7 @@ public class SplitPanel extends JFrame{
 				panel_Mid.repaint();
 				isReversed = false;
 			}
+			painting_resize_box();
 		}
 		
 		public void node_back_again() {
@@ -861,11 +880,9 @@ public class SplitPanel extends JFrame{
 		}
 		
 		public void actionOpen(JSONArray array){//파일에서 불러온 내용 실행하기 - 근데 마우스로 클릭했을때 오른쪽에 안뜸
-			if(isNotFirst) {
-	               panel_Mid.removeAll();
-	               panel_Mid.revalidate();
-	               panel_Mid.repaint();
-	            }
+	            panel_Mid.removeAll();
+	            panel_Mid.revalidate();
+	            panel_Mid.repaint();
 	            jLabel_nodes.clear();
 	            node_for_Labels.clear();
 	            Node root= null;
