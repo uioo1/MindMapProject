@@ -10,11 +10,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.AttributedCharacterIterator;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -27,7 +29,7 @@ import org.json.simple.parser.ParseException;
 import org.json.simple.*;
 
 
-public class SplitPanel extends JPanel{
+public class SplitPanel extends JFrame{
 	MenuBar menubar = new MenuBar();	
 	ToolBar toolbar = new ToolBar();
 	public static JPanel panel_Mid;	//가운데 마인드맵패널 정의
@@ -65,7 +67,7 @@ public class SplitPanel extends JPanel{
         panel_Mid = new JPanel();
         panel_Mid.setBackground(new Color(163, 202, 241));
         panel_Mid.setLayout(null);
-        panel_Mid.addMouseListener(new MindMapMouseListener());
+        panel_Mid.addMouseListener(new MindMapPanelMouseListener());
         split2.setBackground(new Color(100, 100, 100));
         
         
@@ -135,6 +137,36 @@ public class SplitPanel extends JPanel{
 		
 		JButton button_attr = new JButton("변경");
 		panel_Right.add(button_attr);		
+		ActionListener changeNodeListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(before_click_label != null && isReversed == true) {
+					Node myNode = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
+					String [] colors = splitByLength(node_colorfield.getText(), 2);
+					int x = Integer.parseInt(node_xfield.getText()); 
+					int y = Integer.parseInt(node_yfield.getText());
+					int wid = Integer.parseInt(node_widfield.getText());
+					int hei = Integer.parseInt(node_heifield.getText());
+					
+					myNode.setNodex(x);
+					myNode.setNodey(y);
+					before_click_label.setLocation(x, y);					
+					myNode.setNodewid(wid);
+					myNode.setNodehei(hei);
+					before_click_label.setSize(wid, hei);
+					removing_before_resize_label();
+					locating_resize_label(x, y);
+					myNode.setNodeColor(new Color(Integer.parseInt(colors[0], 16), Integer.parseInt(colors[1], 16), Integer.parseInt(colors[2], 16)));
+					before_click_label.setBackground(new Color(255 - Integer.parseInt(colors[0], 16), 255 - Integer.parseInt(colors[1], 16), 255 - Integer.parseInt(colors[2], 16)));
+					
+					for(int i = 0; i < resize_label.length; i++) {
+						before_resize_label[i] = resize_label[i];
+					}	
+				}
+				
+			}
+		};
+		button_attr.addActionListener(changeNodeListener);
+		
 		panel_Right.setLayout(gridAttPane);
 		
 		//틀에 스플릿 추가
@@ -144,6 +176,34 @@ public class SplitPanel extends JPanel{
 		split2.setLeftComponent(panel_Mid);		
 		split2.setRightComponent(panel_Right);
 		
+	}
+	
+	public static String[] splitByLength(String str, int splitLength) {
+		if (str == null) {
+			return null;
+		}
+
+		int strLen = str.length();
+		int arrayLength = Math.abs(strLen / splitLength) + 1;
+
+		String[] strArray = null;
+		if (arrayLength == 0) {
+			return new String[] { str };
+		} else {
+			strArray = new String[arrayLength];
+		}
+
+		String temp = "";
+		for (int i = 0; i < arrayLength; i++) {
+			if (str.length() > splitLength) {
+				strArray[i] = str.substring(0, splitLength);
+				temp = str.substring(splitLength, str.length());
+			} else {
+				strArray[i] = str.substring(0, str.length());
+			}
+			str = temp;
+		}
+		return strArray;
 	}
 	
 	public JSplitPane splitpane_create() {        
@@ -254,14 +314,12 @@ public class SplitPanel extends JPanel{
 			int y = e.getY();
 			int label_x = label.getX();
 			int label_y = label.getY();
-			System.out.println("x : " + x + " y: " + y);
 			
 			myNode.setNodex(label_x + x - before_x);
 			myNode.setNodey(label_y + y - before_y);
 			node_xfield.setText(Integer.toString(label_x + x - before_x));			
 			node_yfield.setText(Integer.toString(label_y + y - before_y));			
 			label.setLocation(label_x + x - before_x, label_y + y - before_y);
-			
 			
 			if(before_click_label == null) {	//맨처음
 				removing_now_resize_label();
@@ -303,6 +361,23 @@ public class SplitPanel extends JPanel{
 		}
 
 		public void mouseEntered(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
+			int node_wid = myNode.getNodewid();
+			int node_hei = myNode.getNodehei();
+			System.out.println("x : "+ x + " y: " + y);
+			
+			if(isReversed) {
+				if((x >= 0 && x <= 10) || (y >= 0 && y <= 10)) {
+					label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+				else {
+					label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+			}
+			else {
+				
+			}
 		}
 
 		public void mouseExited(MouseEvent e) {
@@ -311,14 +386,35 @@ public class SplitPanel extends JPanel{
 		public void mousePressed(MouseEvent e) {
 			before_x = e.getX();
 			before_y = e.getY();
+			int red = myNode.getNodecolor().getRed();
+			int green = myNode.getNodecolor().getGreen();
+			int blue = myNode.getNodecolor().getBlue();
+			String redVal, greenVal, blueVal;
+			
+			if(red < 16)
+				redVal = 0 + Long.toHexString(red);
+			else
+				redVal = Long.toHexString(red);
+			
+			if(green < 16)
+				greenVal = 0 + Long.toHexString(green);
+			else
+				greenVal = Long.toHexString(green);
+			
+			if(blue < 16)
+				blueVal = 0 + Long.toHexString(blue);
+			else
+				blueVal = Long.toHexString(blue);
+			
+			
 			node_textfield.setText(myNode.getNodeData());
 			node_widfield.setText(Integer.toString(myNode.getNodewid()));
 			node_heifield.setText(Integer.toString(myNode.getNodehei()));
-			node_colorfield.setText(Long.toHexString(myNode.getNodecolor().getRed()) + 
-					Long.toHexString(myNode.getNodecolor().getGreen()) + 
-					Long.toHexString(myNode.getNodecolor().getBlue()));
+			node_colorfield.setText(redVal + greenVal + blueVal);
+					
 			
 			locating_resize_label(myNode.getNodex(), myNode.getNodey());
+			painting_resize_box();
 			
 			if(before_click_label == null) {	//맨처음
 				//resize_box[0] = new Rectangle(50, 50, 100, 100);
@@ -407,27 +503,25 @@ public class SplitPanel extends JPanel{
 				}
 			}
 			
-			mid_panel.repaint();
+			mid_panel.repaint();		
 			
 			for(int i = 0; i < resize_label.length; i++) {
 				before_resize_label[i] = resize_label[i];
-			}
-			
+			}			
 			before_click_label = label;	
 			isDragged = false;
 		}
 		
 		public void reversing_node() {
-			label.setBackground(new Color(255 - myNode.getNodecolor().getRed(), 255 - myNode.getNodecolor().getGreen(), 255 - myNode.getNodecolor().getBlue()));
+			label.setBackground(new Color(255 - label.getBackground().getRed(), 255 - label.getBackground().getGreen(), 255 - label.getBackground().getBlue()));
 			label.setForeground(new Color(255 - label.getForeground().getRed(), 255 - label.getForeground().getGreen(), 255 - label.getForeground().getBlue()));
-			myNode.setNodeColor(new Color(255 - myNode.getNodecolor().getRed(), 255 - myNode.getNodecolor().getGreen(), 255 - myNode.getNodecolor().getBlue()));
 		}
 		
 		public void node_back_again() {
-			Node temp_node = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
-			before_click_label.setBackground(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+			//Node temp_node = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
+			before_click_label.setBackground(new Color(255 - before_click_label.getBackground().getRed(), 255 - before_click_label.getBackground().getGreen(), 255 - before_click_label.getBackground().getBlue()));
 			before_click_label.setForeground(new Color(255 - before_click_label.getForeground().getRed(), 255 - before_click_label.getForeground().getGreen(), 255 - before_click_label.getForeground().getBlue()));
-			temp_node.setNodeColor(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+			//temp_node.setNodeColor(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
 		}
 		
 		public void locating_resize_label(int real_x, int real_y) {
@@ -442,9 +536,7 @@ public class SplitPanel extends JPanel{
 				resize_label[i].setBorder(new LineBorder(new Color(155, 157, 159), 1));
 				resize_label[i].setSize(8, 8);
 				resize_label[i].setBackground(Color.WHITE);
-				//before_resize_label[i] = resize_label[i];
 			}
-			//System.out.println("생겼는데?");
 			resize_label[0].setLocation(x - 4, y - 4);
 			mid_panel.add(resize_label[0]);
 			resize_label[1].setLocation(x + wid/2 - 4, y - 4);
@@ -481,15 +573,67 @@ public class SplitPanel extends JPanel{
 			}
 		}
 		
-		public void painting_resize_box(Graphics g) {
-			
-		}
-		
 	}
 	
-	class MindMapMouseListener implements MouseListener{
+	public void painting_resize_box() {	//클래스 내 함수임 MouseListener의 함수가 아님
+		Graphics g = panel_Mid.getGraphics();
+		panel_Mid.paint(g);
+		g.drawRect(50, 50, 6, 6);
+	}
+	
+	public void locating_resize_label(int real_x, int real_y) {
+		Node myNode = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
+		int x = real_x;
+		int y = real_y;
+		int wid = myNode.getNodewid();
+		int hei = myNode.getNodehei();
+		
+		for(int i = 0; i < resize_label.length; i++) {
+			resize_label[i] = new JLabel("");
+			resize_label[i].setOpaque(true);
+			resize_label[i].setBorder(new LineBorder(new Color(155, 157, 159), 1));
+			resize_label[i].setSize(8, 8);
+			resize_label[i].setBackground(Color.WHITE);
+		}
+		resize_label[0].setLocation(x - 4, y - 4);
+		panel_Mid.add(resize_label[0]);
+		resize_label[1].setLocation(x + wid/2 - 4, y - 4);
+		panel_Mid.add(resize_label[1]);
+		resize_label[2].setLocation(x + wid - 4, y - 4);
+		panel_Mid.add(resize_label[2]);
+		resize_label[3].setLocation(x - 4, y + hei/2 - 4);
+		panel_Mid.add(resize_label[3]);
+		resize_label[4].setLocation(x + wid - 4, y + hei/2 - 4);
+		panel_Mid.add(resize_label[4]);
+		resize_label[5].setLocation(x - 4, y + hei - 4);
+		panel_Mid.add(resize_label[5]);
+		resize_label[6].setLocation(x + wid/2 - 4, y + hei - 4);
+		panel_Mid.add(resize_label[6]);
+		resize_label[7].setLocation(x + wid - 4, y + hei - 4);
+		panel_Mid.add(resize_label[7]);
+		
+		panel_Mid.repaint();
+	}
+	
+	public void removing_before_resize_label() {
+		if(before_resize_label[0] != null) {
+			for(int i = 0; i < before_resize_label.length; i++) {
+				panel_Mid.remove(before_resize_label[i]);
+			}
+		}
+	}
+	
+	public void removing_now_resize_label() {
+		if(resize_label[0] != null) {
+			for(int i = 0; i < resize_label.length; i++) {
+				panel_Mid.remove(resize_label[i]);
+			}
+		}
+	}
+	
+	class MindMapPanelMouseListener implements MouseListener{
 		 
-		public MindMapMouseListener() {
+		public MindMapPanelMouseListener() {
 		}
 
 		public void mouseClicked(MouseEvent arg0) {
@@ -514,18 +658,8 @@ public class SplitPanel extends JPanel{
 		}
 		
 		public void node_back_again() {
-			Node temp_node = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
-			before_click_label.setBackground(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
+			before_click_label.setBackground(new Color(255 - before_click_label.getBackground().getRed(), 255 - before_click_label.getBackground().getGreen(), 255 - before_click_label.getBackground().getBlue()));
 			before_click_label.setForeground(new Color(255 - before_click_label.getForeground().getRed(), 255 - before_click_label.getForeground().getGreen(), 255 - before_click_label.getForeground().getBlue()));
-			temp_node.setNodeColor(new Color(255 - temp_node.getNodecolor().getRed(), 255 - temp_node.getNodecolor().getGreen(), 255 - temp_node.getNodecolor().getBlue()));
-		}
-		
-		public void removing_before_resize_label() {
-			if(before_resize_label[0] != null) {
-				for(int i = 0; i < before_resize_label.length; i++) {
-					panel_Mid.remove(before_resize_label[i]);
-				}
-			}
 		}
 		
 	}
