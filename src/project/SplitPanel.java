@@ -26,6 +26,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import jdk.jfr.Unsigned;
+
 import org.json.simple.*;
 
 
@@ -52,7 +55,6 @@ public class SplitPanel extends JFrame{
 	JLabel before_click_label = null;
 	JLabel resize_label[] = new JLabel[8];
 	JLabel before_resize_label[] = new JLabel[8];
-	Rectangle[] resize_box = new Rectangle[8];
 	boolean isNotFirst = false;
 	boolean isReversed = false;
 	boolean isDragged = false;
@@ -237,13 +239,82 @@ public class SplitPanel extends JFrame{
 		
 	}
 	
-	public void relocating_tree() {
-		Node temp_Node, myNode;
-		int before_count = 0, count;
-		jLabel_nodes.get(0).setLocation(panel_Mid.getWidth()/ 2 - jLabel_nodes.get(0).getWidth()/2, panel_Mid.getHeight()/2 - jLabel_nodes.get(0).getHeight()/2);
+	public void relocating_tree(Node this_node) {
+		Node now_Node = this_node;
+		Node temp_Node = null;
+		int sibling_count = 0;
+		double distance = 150;
 		
-		for(int i = 0; i < jLabel_nodes.size(); i++) {
+		if(now_Node == myTree.root) {
+			jLabel_nodes.get(node_for_Labels.indexOf(now_Node)).setLocation(panel_Mid.getWidth()/ 2 - jLabel_nodes.get(0).getWidth()/2, panel_Mid.getHeight()/2 - jLabel_nodes.get(0).getHeight()/2);
+			now_Node.setNodex(panel_Mid.getWidth()/2 - jLabel_nodes.get(0).getWidth()/2);
+			now_Node.setNodey(panel_Mid.getHeight()/2 - jLabel_nodes.get(0).getHeight()/2);
+		}
+		
+		while(true) {
+			while(now_Node.getLeftChild() != null) {
+				sibling_count++;
+				temp_Node = now_Node.getLeftChild();
 			
+				while(temp_Node.getRightSibling() != null) {
+					sibling_count++;
+					temp_Node = temp_Node.getRightSibling();
+				}
+				temp_Node = now_Node.getLeftChild();			 
+
+				for(int i = 0; i < sibling_count; i++) {
+					double radius = 2 * Math.PI / sibling_count;
+					System.out.println(distance * (int)Math.sin(radius * i) + " "+  distance * (int)Math.cos(radius * i));
+					//System.out.println(i + "번째 지금은 " + temp_Node.getNodeData() + " " +now_Node.getNodex() + " " + now_Node.getNodey());
+					temp_Node.setNodex(now_Node.getNodex() + (int)(distance*Math.sin(radius * i)));
+					temp_Node.setNodey(now_Node.getNodey() + (int)(distance*Math.cos(radius * i)));
+					jLabel_nodes.get(node_for_Labels.indexOf(temp_Node)).setLocation(temp_Node.getNodex(), temp_Node.getNodey());
+					temp_Node = temp_Node.getRightSibling();
+				}
+				temp_Node = now_Node.getLeftChild();
+			
+				/////여기까지는 루트의 자식들 다 출력
+				if(distance-20 > 0)
+					distance = distance - 20;
+				sibling_count = 0;
+				now_Node = now_Node.getLeftChild();
+			}
+		
+			temp_Node = now_Node;
+			while(true) {				
+				System.out.println(temp_Node.getNodeData());
+				if(temp_Node.getLeftChild() != null) {	//자식이 있다면
+					now_Node = temp_Node;
+					break;
+				}
+				else if(temp_Node.getRightSibling() != null) {	//형제가 있다면
+					temp_Node= temp_Node.getRightSibling();
+					continue;
+				}
+				else if(temp_Node.getParent() != null) {	//자식이랑 형제는 없고 부모만 있다면
+					while(true) {
+						if(temp_Node.getParent().getRightSibling() != null) {	//부모의 오른쪽 형제가 있을때
+							temp_Node = temp_Node.getParent().getRightSibling();
+							break;
+						}
+						else {													//부모의 오른쪽 형제가 없을때
+							if(temp_Node.getParent().getParent() != null) {	//부모의 부모는 있을 때
+								temp_Node = temp_Node.getParent();
+							}
+							else {											//부모의 부모가 없을때(부모가 root일때)
+								temp_Node = null;
+								break;
+							}
+						}
+					}
+				}
+
+				if(temp_Node == null)
+					break;
+			}
+			
+			if(temp_Node == null)
+				break;
 		}
 	}
 	
@@ -317,7 +388,6 @@ public class SplitPanel extends JFrame{
 			int y = e.getY();
 			int node_wid = myNode.getNodewid();
 			int node_hei = myNode.getNodehei();
-			System.out.println("x : "+ x + " y: " + y);
 			
 			if(isReversed) {
 				if((x >= 0 && x <= 10) || (y >= 0 && y <= 10)) {
@@ -596,7 +666,7 @@ public class SplitPanel extends JFrame{
 			myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
 			draw_Tree(myTree.root, 0, panel_Mid);
 			recoloring_tree();
-			relocating_tree();
+			relocating_tree(myTree.root);
 			panel_Mid.repaint();
 			before_click_label = null;
 			isNotFirst = true;

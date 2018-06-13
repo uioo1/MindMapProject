@@ -8,9 +8,9 @@ public class Node {
 	public JLabel myLabel;
 	private int index, node_x, node_y, node_wid, node_hei;
 	private Color node_color;
-	private Node parent;
-    private Node leftChild;
-    private Node rightSibling;
+	private Node parent = null;
+    private Node leftChild = null;
+    private Node rightSibling = null;
  
     public Node(String node_data) {
         this.node_data = node_data;
