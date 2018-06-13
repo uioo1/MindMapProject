@@ -78,28 +78,8 @@ public class SplitPanel extends JFrame{
 		
 		panel_Left_Background.setBackground(new Color(255, 255, 255));
 		panel_Left_Background.setLayout(new BorderLayout(5,5));
-		panel_Left_Background.add( new JScrollPane( myDrawPanel ), BorderLayout.CENTER );
-		panel_Left_Background.add( textbutton, BorderLayout.SOUTH );
-		
-		ActionListener TextPanelActionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				myTree = new Tree();
-				if(isNotFirst) {
-					panel_Mid.removeAll();
-					panel_Mid.revalidate();
-					panel_Mid.repaint();
-				}
-				jLabel_nodes.clear();
-				node_for_Labels.clear();
-				myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
-				draw_Tree(myTree.root, 0, panel_Mid);
-				recoloring_tree();
-				relocating_tree();
-				panel_Mid.repaint();
-				before_click_label = null;
-				isNotFirst = true;
-			}
-		};
+		panel_Left_Background.add(new JScrollPane( myDrawPanel ), BorderLayout.CENTER );
+		panel_Left_Background.add(textbutton, BorderLayout.SOUTH );
 	    textbutton.addActionListener(TextPanelActionListener);	//Action 리스너 달기
 
 				
@@ -137,35 +117,7 @@ public class SplitPanel extends JFrame{
 		
 		JButton button_attr = new JButton("변경");
 		panel_Right.add(button_attr);		
-		ActionListener changeNodeListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(before_click_label != null && isReversed == true) {
-					Node myNode = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
-					String [] colors = splitByLength(node_colorfield.getText(), 2);
-					int x = Integer.parseInt(node_xfield.getText()); 
-					int y = Integer.parseInt(node_yfield.getText());
-					int wid = Integer.parseInt(node_widfield.getText());
-					int hei = Integer.parseInt(node_heifield.getText());
-					
-					myNode.setNodex(x);
-					myNode.setNodey(y);
-					before_click_label.setLocation(x, y);					
-					myNode.setNodewid(wid);
-					myNode.setNodehei(hei);
-					before_click_label.setSize(wid, hei);
-					removing_before_resize_label();
-					locating_resize_label(x, y);
-					myNode.setNodeColor(new Color(Integer.parseInt(colors[0], 16), Integer.parseInt(colors[1], 16), Integer.parseInt(colors[2], 16)));
-					before_click_label.setBackground(new Color(255 - Integer.parseInt(colors[0], 16), 255 - Integer.parseInt(colors[1], 16), 255 - Integer.parseInt(colors[2], 16)));
-					
-					for(int i = 0; i < resize_label.length; i++) {
-						before_resize_label[i] = resize_label[i];
-					}	
-				}
-				
-			}
-		};
-		button_attr.addActionListener(changeNodeListener);
+		button_attr.addActionListener(ChangeNodeListener);
 		
 		panel_Right.setLayout(gridAttPane);
 		
@@ -231,7 +183,7 @@ public class SplitPanel extends JFrame{
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		panel_Mid.add(label);	//Label 마인드맵에 추가
-		jLabel_nodes.add(label);	
+		jLabel_nodes.add(label);
 		node_for_Labels.add(root);
 		root.setmyLabel(label);
 		root.setIndex(i);
@@ -631,6 +583,55 @@ public class SplitPanel extends JFrame{
 		}
 	}
 	
+	ActionListener TextPanelActionListener = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			myTree = new Tree();
+			if(isNotFirst) {
+				panel_Mid.removeAll();
+				panel_Mid.revalidate();
+				panel_Mid.repaint();
+			}
+			jLabel_nodes.clear();
+			node_for_Labels.clear();
+			myTree.getTextPanel(myDrawPanel.getText());	//tree에 textPanel내용 넘겨주기
+			draw_Tree(myTree.root, 0, panel_Mid);
+			recoloring_tree();
+			relocating_tree();
+			panel_Mid.repaint();
+			before_click_label = null;
+			isNotFirst = true;
+		}
+	};
+	
+	ActionListener ChangeNodeListener = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			if(before_click_label != null && isReversed == true) {
+				Node myNode = node_for_Labels.get(jLabel_nodes.indexOf(before_click_label));
+				String [] colors = splitByLength(node_colorfield.getText(), 2);
+				int x = Integer.parseInt(node_xfield.getText()); 
+				int y = Integer.parseInt(node_yfield.getText());
+				int wid = Integer.parseInt(node_widfield.getText());
+				int hei = Integer.parseInt(node_heifield.getText());
+				
+				myNode.setNodex(x);
+				myNode.setNodey(y);
+				before_click_label.setLocation(x, y);					
+				myNode.setNodewid(wid);
+				myNode.setNodehei(hei);
+				before_click_label.setSize(wid, hei);
+				removing_before_resize_label();
+				locating_resize_label(x, y);
+				myNode.setNodeColor(new Color(Integer.parseInt(colors[0], 16), Integer.parseInt(colors[1], 16), Integer.parseInt(colors[2], 16)));
+				before_click_label.setBackground(new Color(255 - Integer.parseInt(colors[0], 16), 255 - Integer.parseInt(colors[1], 16), 255 - Integer.parseInt(colors[2], 16)));
+				
+				for(int i = 0; i < resize_label.length; i++) {
+					before_resize_label[i] = resize_label[i];
+				}
+			}
+			
+		}
+	};
+	
 	class MindMapPanelMouseListener implements MouseListener{
 		 
 		public MindMapPanelMouseListener() {
@@ -739,10 +740,12 @@ public class SplitPanel extends JFrame{
 		     tool.addSeparator();
 		     JButton applybtn = new JButton("적용");
 		     tool.add(applybtn);
+		     applybtn.addActionListener(TextPanelActionListener);	//Action 리스너 달기
 		     applybtn.setToolTipText("텍스트 편집 내용을 마인드 맵에 적용합니다");
 		     tool.addSeparator();
 		     JButton changebtn = new JButton("변경");
 		     changebtn.setToolTipText("속성 변경 내용을 마인드 맵에 적용합니다");
+		     changebtn.addActionListener(ChangeNodeListener);
 		     tool.add(changebtn);
 		     tool.addSeparator();
 
