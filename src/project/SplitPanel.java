@@ -963,7 +963,7 @@ public class SplitPanel extends JFrame{
 			if(isReversed == true ) {
 				node_back_again();
 				removing_before_resize_label();
-				//panel_Mid.repaint();
+				panel_Mid.repaint();
 				isReversed = false;
 			}
 		}
@@ -1065,9 +1065,9 @@ public class SplitPanel extends JFrame{
 		     
 		     JComboBox<String> combo = new JComboBox<String>();
 		     combo.addItem("click");
-		     combo.addItem("ㅗ");
-		     combo.addItem("ㅗㅗ");
-		     combo.addItem("ㅗㅗㅗ");
+		     combo.addItem("교수님");
+		     combo.addItem("너무 잘생겼어요");
+		     combo.addItem("조교님도 당근빳다죠");
 		     tool.add(combo);
 		     openbtn.addActionListener(new OpenActionListener());
 		     save_otherbtn.addActionListener(new SaveAsActionListener());
@@ -1092,7 +1092,7 @@ public class SplitPanel extends JFrame{
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
 			chooser.setFileFilter(filter);
 			int ret = chooser.showOpenDialog(null);
-			String pathName = chooser.getSelectedFile().getPath();//클릭한것 경로저장
+			String pathName = chooser.getSelectedFile().getPath();//Ŭ���Ѱ� �������
 			if(ret != JFileChooser.APPROVE_OPTION) {
 				JOptionPane.showMessageDialog(null,"파일을 선택하지 않았습니다", "경고",JOptionPane.WARNING_MESSAGE);
 				return;
@@ -1120,29 +1120,25 @@ public class SplitPanel extends JFrame{
 	            System.out.println("array size : " + array.size());
 	            String arr[] = new String[array.size()];
 	            String temptext = "start";
-	            for(int i = 1; i<array.size()-1; i++) {//마지막은 텍스트 내용이여서 -1
+	            for(int i = 1; i<array.size()-1; i++) {//�������� �ؽ�Ʈ �����̿��� -1
 	            	arr[i] = "\n"+i;
 	            	temptext = temptext.concat(arr[i]);
 	            }
 	            myDrawPanel.setText(temptext);
 				myTree.getTextPanel(myDrawPanel.getText());
-				draw_Tree(myTree.root, 0, panel_Mid);
-				recoloring_tree();
-				relocating_tree(myTree.root);
+
     			panel_Mid.repaint();
     			panel_Mid.removeAll();
 				panel_Mid.revalidate();
 				int j = 0;
 	    			for(Node label : SplitPanel.node_for_Labels) {
-	    				System.out.println("처음 노드 이름 :"+label.getNodeData() );
+	    				System.out.println("아 :"+label.getNodeData() );
 	    				JSONObject obj = (JSONObject)array.get(j);
 			    		int x = Integer.parseInt((String) obj.get("x"));
 			    		int y = Integer.parseInt((String) obj.get("y"));
 			   			int w = Integer.parseInt((String) obj.get("w"));
 			   			int h = Integer.parseInt((String) obj.get("h"));
-			   			int index = Integer.parseInt((String) obj.get("index"));
 			   			String Node_Data = (String)obj.get("NodeData");
-		    			String MyLabel = (String)obj.get("MyLabel");
 		    			// color = (Color)obj.get("Color");
 		    			//Node LChil = (Node)obj.get("LChil");
 		    			//Node Parent = (Node)obj.get("Parent");
@@ -1152,7 +1148,6 @@ public class SplitPanel extends JFrame{
 	    				label.setNodewid(w);
 	    				label.setNodehei(h);
 	    				label.setData(Node_Data);
-	    				//label.setIndex(index);
 	    				//label.setmyLabel(MyLabel);
 	    				//label.setNodeColor(color);
 	    				//label.setLeftChild(LChil);
@@ -1164,14 +1159,12 @@ public class SplitPanel extends JFrame{
 	    					myTree.root.setNodey(x);
 	    					myTree.root.setNodehei(h);
 	    					myTree.root.setNodewid(w);
-	    					System.out.println("바뀐루트 x 값 :"+myTree.root.getNodex());
-		    				System.out.println("바뀐루트 노드 이름 :"+myTree.root.getNodeData());
+	    					System.out.println("�ٲ��Ʈ x �� :"+myTree.root.getNodex());
+		    				System.out.println("�ٲ��Ʈ ��� �̸� :"+myTree.root.getNodeData());
 	    				}*/
 	    				j++;
-	    				System.out.println("바뀐 x 값 :"+label.getNodex());
-	    				System.out.println("바뀐 노드 이름 :"+label.getNodeData());
 	    			}
-	    			int num = array.size();//textarea집어 넣기
+	    			int num = array.size();//textarea���� �ֱ�
 	    			JSONObject obj = (JSONObject)array.get(num-1);
 	    			String paneltext = (String)obj.get("textarea");
 	    			System.out.println(paneltext);
@@ -1181,37 +1174,30 @@ public class SplitPanel extends JFrame{
 	            }
 	       }
 	public void draw_Tree2(Node root, int i ,JPanel mid_panel, JSONArray array) {
-		JLabel label = new JLabel(root.getNodeData());
-		int check = 0;
-		Node check_node = root;
 		JSONObject obj = (JSONObject)array.get(i);
+		JLabel label = new JLabel((String)obj.get("NodeData"));
+		String [] colors = splitByLength((String)obj.get("Color"), 2);
+		
+		
 		int x = Integer.parseInt((String) obj.get("x"));
 		int y = Integer.parseInt((String) obj.get("y"));
 		int w = Integer.parseInt((String) obj.get("w"));
 		int h = Integer.parseInt((String) obj.get("h"));
-		int index = Integer.parseInt((String) obj.get("index"));
 		String Node_Data = (String)obj.get("NodeData");
 		String MyLabel = (String)obj.get("MyLabel");
-		
-		label.setSize(w, h);/////////이건또 뭐고????
+
+		label.setSize(w, h);/////////�̰Ƕ� ����????
 		label.setLocation(x, y);
 		label.setName(Node_Data);
 		label.setOpaque(true);
-		int random_r, random_g, random_b;
-		random_r = (int)(Math.random() * 256);
-		random_g = (int)(Math.random() * 256);
-		random_b = (int)(Math.random() * 256);
-		Color random_color = new Color(random_r, random_g, random_b);
-		label.setBackground(random_color);
-		root.setNodeColor(random_color);
+		label.setBackground(new Color(Integer.parseInt(colors[0], 16), Integer.parseInt(colors[1], 16), Integer.parseInt(colors[2], 16)));
 
 		label.setBorder(new LineBorder(new Color(82, 130, 184), 2));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		panel_Mid.add(label);	//Label 마인드맵에 추가
+		panel_Mid.add(label);	//Label ���ε�ʿ� �߰�
 		jLabel_nodes.add(label);
 		node_for_Labels.add(root);
-		//root.setmyLabel(label);//////////이건 뭐임???
 		root.setNodewid(w);//myTree.root.getNodewid());
 		root.setNodehei(h);//myTree.root.getNodehei());
 		root.setNodex(x);//myTree.root.getNodex());
@@ -1222,11 +1208,11 @@ public class SplitPanel extends JFrame{
 		label.addMouseListener(nodeMouse);
 		label.addMouseMotionListener(nodeMouse);
        
-		// 자식 노드가 존재한다면
+		// �ڽ� ��尡 �����Ѵٸ�
 	    if(root.getLeftChild() != null)
 	    	draw_Tree2(root.getLeftChild(), i + 1, panel_Mid, array);
 	         
-	    // 형제 노드가 존재한다면
+	    // ���� ��尡 �����Ѵٸ�
 	    if(root.getRightSibling() != null)
 	    	draw_Tree2(root.getRightSibling(), i + 1, panel_Mid, array);
 	    	
@@ -1258,7 +1244,24 @@ public class SplitPanel extends JFrame{
 			    	obj.put("LChil", numStr7);
 			    	//String numStr8 = String.valueOf(label.getmyLabel());
 			    	//obj.put("MyLabel", numStr8);
-			    	String numStr9 = String.valueOf(label.getNodecolor());
+			    	int red, green, blue;
+			    	String redVal, greenVal, blueVal;
+			    	red = label.getNodecolor().getRed();
+			    	if(red < 16)
+			    		redVal = String.valueOf(0) + Long.toHexString(red);
+			    	else
+			    		redVal = Long.toHexString(red);
+			    	green = label.getNodecolor().getGreen();
+			    	if(green < 16)
+			    		greenVal = String.valueOf(0) + Long.toHexString(green);
+			    	else
+			    		greenVal = Long.toHexString(green);			    	
+			    	blue = label.getNodecolor().getBlue();
+			    	if(blue < 16)
+			    		blueVal = String.valueOf(0) + Long.toHexString(blue);
+			    	else
+			    		blueVal = Long.toHexString(blue);
+			    	String numStr9 = String.valueOf(redVal + greenVal + blueVal);
 			    	obj.put("Color", numStr9);
 			    	String numStr10 = String.valueOf(label.getNodeData());
 			    	obj.put("NodeData", numStr10);
@@ -1321,7 +1324,24 @@ public class SplitPanel extends JFrame{
 			    	obj.put("LChil", numStr7);
 			    	//String numStr8 = String.valueOf(label.getmyLabel());
 			    	//obj.put("MyLabel", numStr8);
-			    	String numStr9 = String.valueOf(label.getNodecolor());
+			    	int red, green, blue;
+			    	String redVal, greenVal, blueVal;
+			    	red = label.getNodecolor().getRed();
+			    	if(red < 16)
+			    		redVal = String.valueOf(0) + Long.toHexString(red);
+			    	else
+			    		redVal = Long.toHexString(red);
+			    	green = label.getNodecolor().getGreen();
+			    	if(green < 16)
+			    		greenVal = String.valueOf(0) + Long.toHexString(green);
+			    	else
+			    		greenVal = Long.toHexString(green);			    	
+			    	blue = label.getNodecolor().getBlue();
+			    	if(blue < 16)
+			    		blueVal = String.valueOf(0) + Long.toHexString(blue);
+			    	else
+			    		blueVal = Long.toHexString(blue);
+			    	String numStr9 = String.valueOf(redVal + greenVal + blueVal);
 			    	obj.put("Color", numStr9);
 			    	String numStr10 = String.valueOf(label.getNodeData());
 			    	obj.put("NodeData", numStr10);
