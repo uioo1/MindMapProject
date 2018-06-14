@@ -58,12 +58,13 @@ public class SplitPanel extends JFrame{
 	boolean isReversed = false;
 	boolean isDragged = false;
 	
-	
 	public SplitPanel() {
         split.setDividerLocation( 300 );
         split2.setDividerLocation( 800 );
         
         /////////////////가운데 마인드맵 패널
+        
+        
         
         panel_Mid = new JPanel();
         panel_Mid.setBackground(new Color(163, 202, 241));
@@ -360,8 +361,6 @@ public class SplitPanel extends JFrame{
 			int label_x = label.getX();
 			int label_y = label.getY();
 			
-			//System.out.println("beforex : " + before_x + " x : " + x);
-			
 			if(isEast == true) {
 				//System.out.println(before_wid + x-before_x + " " + before_hei);
 				if(before_wid - before_x >= x) {
@@ -396,20 +395,111 @@ public class SplitPanel extends JFrame{
 				locating_resize_label(label_x, label_y);
 			}
 			else if(isWest == true) {
-				System.out.println(before_wid + (-x)+before_x + " " + before_hei);
-				if(before_wid + before_x <= x) {
+				//System.out.println("before_x: " + before_x + " x: " + x + "차이 : " + (before_x - x));
+				//System.out.println(before_wid +before_x - x + " " + before_hei);
+				/*if(before_wid + before_x <= x) {
 					x = -(before_wid + before_x) + 15;
-				}
-				label.setBounds(label.getX(), label.getY(), before_wid + (-x)+before_x, before_hei);
-				label.setLocation(before_label_x - (-x)+before_x, before_label_y);
-				node_xfield.setText(Integer.toString(before_label_x - (-x)+before_x));			
+				}*/
+				label.setBounds(label.getX(), label.getY(), before_wid + before_x-x, before_hei);
+				label.setLocation(before_label_x - (before_x-x), before_label_y);
+				node_xfield.setText(Integer.toString(before_label_x - (before_x-x)));			
 				node_yfield.setText(Integer.toString(label_y));		
-				node_widfield.setText(Integer.toString(before_wid + (-x)+before_x));
+				node_widfield.setText(Integer.toString(before_wid + (before_x-x)));
 				node_heifield.setText(Integer.toString(before_hei));
-				myNode.setNodex(before_label_x - (-x)+before_x);
+				myNode.setNodex(before_label_x - (before_x-x));
 				myNode.setNodey(label_y);
-				myNode.setNodewid(before_wid + (-x)+before_x);
+				myNode.setNodewid(before_wid + (before_x-x));
 				myNode.setNodehei(before_hei);
+				removing_now_resize_label();
+				locating_resize_label(label_x, label_y);
+			}
+			else if(isSE == true) {
+				if(before_wid - before_x >= x) {
+					x = -(before_wid - before_x) + 15;
+				}
+				if(before_hei -before_y >= y) {
+					y = -(before_hei -before_y) + 15;
+				}
+				label.setBounds(label.getX(), label.getY(), before_wid + x-before_x, before_hei + y-before_y);
+				node_xfield.setText(Integer.toString(label_x));			
+				node_yfield.setText(Integer.toString(label_y));		
+				node_widfield.setText(Integer.toString(before_wid + x-before_x));
+				node_heifield.setText(Integer.toString(before_hei + y-before_y));
+				myNode.setNodex(label_x);
+				myNode.setNodey(label_y);
+				myNode.setNodewid(before_wid + x-before_x);
+				myNode.setNodehei(before_hei + y-before_y);
+				removing_now_resize_label();
+				locating_resize_label(label_x, label_y);
+			}
+			else if(isSW == true) {
+				if(before_hei -before_y >= y) {
+					y = -(before_hei -before_y) + 15;
+				}
+				label.setBounds(label.getX(), label.getY(), before_wid + before_x-x,before_hei + y-before_y);
+				label.setLocation(before_label_x - (before_x-x), label_y);
+				node_xfield.setText(Integer.toString(before_label_x - (before_x-x)));			
+				node_yfield.setText(Integer.toString(label_y));		
+				node_widfield.setText(Integer.toString(before_wid + before_x-x));
+				node_heifield.setText(Integer.toString(before_hei + y-before_y));
+				myNode.setNodex(before_label_x - (before_x-x));
+				myNode.setNodey(label_y);
+				myNode.setNodewid(before_wid + before_x-x);
+				myNode.setNodehei(before_hei + y-before_y);
+				removing_now_resize_label();
+				locating_resize_label(label_x, label_y);
+			}
+			else if(isNorth == true) {
+				if(before_hei + before_y <= y) {
+					y = -(before_hei + before_y) + 15;
+				}
+				label.setBounds(label.getX(), label.getY(), before_wid, before_hei + (before_y-y));
+				label.setLocation(label_x, before_label_y - (before_y-y));
+				node_xfield.setText(Integer.toString(label_x));			
+				node_yfield.setText(Integer.toString(before_label_y - (before_y-y)));		
+				node_widfield.setText(Integer.toString(before_wid));
+				node_heifield.setText(Integer.toString(before_hei + (before_y-y)));
+				myNode.setNodex(label_x);
+				myNode.setNodey(before_label_y - (before_y-y));
+				myNode.setNodewid(before_wid);
+				myNode.setNodehei(before_hei + (before_y-y));
+				removing_now_resize_label();
+				locating_resize_label(label_x, label_y);
+			}
+			else if(isNE == true) {
+				if(before_wid - before_x >= x) {
+					x = -(before_wid - before_x) + 15;
+				}
+				if(before_hei + before_y <= y) {
+					y = -(before_hei + before_y) + 15;
+				}
+				label.setBounds(label.getX(), label.getY(), before_wid + x-before_x, before_hei + (before_y-y));
+				label.setLocation(label_x, before_label_y - (before_y-y));
+				node_xfield.setText(Integer.toString(label_x));			
+				node_yfield.setText(Integer.toString(before_label_y - (before_y-y)));		
+				node_widfield.setText(Integer.toString(before_wid + x-before_x));
+				node_heifield.setText(Integer.toString(before_hei + (before_y-y)));
+				myNode.setNodex(label_x);
+				myNode.setNodey(before_label_y - (before_y-y));
+				myNode.setNodewid(before_wid + x-before_x);
+				myNode.setNodehei(before_hei + (before_y-y));
+				removing_now_resize_label();
+				locating_resize_label(label_x, label_y);
+			}
+			else if(isNW == true) {
+				if(before_hei + before_y <= y) {
+					y = -(before_hei + before_y) + 15;
+				}
+				label.setBounds(label.getX(), label.getY(), before_wid + before_x-x, before_hei + (before_y-y));
+				label.setLocation(before_label_x - (before_x-x), before_label_y - (before_y-y));
+				node_xfield.setText(Integer.toString(before_label_x - (before_x-x)));			
+				node_yfield.setText(Integer.toString(before_label_y - (before_y-y)));		
+				node_widfield.setText(Integer.toString(before_wid + before_x-x));
+				node_heifield.setText(Integer.toString(before_hei + (before_y-y)));
+				myNode.setNodex(before_label_x - (before_x-x));
+				myNode.setNodey(before_label_y - (before_y-y));
+				myNode.setNodewid(before_wid + before_x-x);
+				myNode.setNodehei(before_hei + (before_y-y));
 				removing_now_resize_label();
 				locating_resize_label(label_x, label_y);
 			}
@@ -451,8 +541,6 @@ public class SplitPanel extends JFrame{
 				}
 			}
 			
-			//false_compass();
-			painting_line();
 			isDragged = true;
 		}
 
@@ -659,8 +747,7 @@ public class SplitPanel extends JFrame{
 				}
 			}
 			
-			//mid_panel.repaint();
-			painting_line();
+			mid_panel.repaint();
 			
 			for(int i = 0; i < resize_label.length; i++) {
 				before_resize_label[i] = resize_label[i];
@@ -735,8 +822,7 @@ public class SplitPanel extends JFrame{
 	
 	public void painting_line() {	//클래스 내 함수임 MouseListener의 함수가 아님
 		g_line = panel_Mid.getGraphics();
-		panel_Mid.paint(g_line);
-		g_line.drawRect(50, 50, 6, 6);		
+		panel_Mid.paint(g_line);		
 		g_line.drawLine(myTree.root.getNodex(), myTree.root.getNodey(), myTree.root.getLeftChild().getNodex(), myTree.root.getLeftChild().getNodey());
 	}
 	
@@ -862,7 +948,6 @@ public class SplitPanel extends JFrame{
 		}
 
 		public void mouseClicked(MouseEvent arg0) {
-			painting_line();
 		}
 
 		public void mouseEntered(MouseEvent arg0) {	
@@ -872,7 +957,6 @@ public class SplitPanel extends JFrame{
 		}
 
 		public void mousePressed(MouseEvent arg0) {	
-			painting_line();
 		}
 
 		public void mouseReleased(MouseEvent arg0) {
@@ -882,7 +966,6 @@ public class SplitPanel extends JFrame{
 				//panel_Mid.repaint();
 				isReversed = false;
 			}
-			painting_line();
 		}
 		
 		public void node_back_again() {
@@ -912,8 +995,10 @@ public class SplitPanel extends JFrame{
 
 	        JMenu_New.addActionListener(NewcreateListener);
 	        JMenu_Open.addActionListener(new OpenActionListener());
-	        JMenu_SaveAs.addActionListener(new SaveAsActionListener());
 	        JMenu_Save.addActionListener(new SaveActionListener());
+	        JMenu_SaveAs.addActionListener(new SaveAsActionListener());
+	        JMenu_Apply.addActionListener(TextPanelActionListener);
+	        JMenu_Change.addActionListener(ChangeNodeListener);
 	        JMenu_Close.addActionListener(new ActionListener(){
 	            public void actionPerformed(ActionEvent arg0){
 	                System.exit(0);//dispose는 창하나만 닫기이고 exit는 모든 창닫기인데 dispose같은 경우는jframe을 상속하애되서 일단 exit으로 함
