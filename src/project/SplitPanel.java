@@ -55,8 +55,11 @@ public class SplitPanel extends JFrame{
 	JLabel before_click_label = null;
 	JLabel resize_label[] = new JLabel[8];
 	JLabel before_resize_label[] = new JLabel[8];
+<<<<<<< HEAD
 
 	Graphics g_line;
+=======
+>>>>>>> parent of 14a0231... 커서 모양 바뀌고 여러가지바뀜
 	boolean isReversed = false;
 	boolean isDragged = false;
 	
@@ -315,7 +318,7 @@ public class SplitPanel extends JFrame{
 		}
 	}
 	
-	class NodeMouseListener extends Frame implements MouseListener, MouseMotionListener {
+	class NodeMouseListener implements MouseListener, MouseMotionListener {
 		JLabel label;
 		JPanel mid_panel;
 		Node myNode;
@@ -441,8 +444,6 @@ public class SplitPanel extends JFrame{
 			int green = myNode.getNodecolor().getGreen();
 			int blue = myNode.getNodecolor().getBlue();
 			String redVal, greenVal, blueVal;
-			
-			
 			
 			if(red < 16)
 				redVal = 0 + Long.toHexString(red);
