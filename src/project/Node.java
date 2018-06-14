@@ -4,9 +4,8 @@ import java.awt.Color;
 import javax.swing.JLabel;
 
 public class Node {
-	private String node_data;
-	public JLabel myLabel;
-	private int index, node_x, node_y, node_wid, node_hei;
+	private String node_data;;
+	private int node_x, node_y, node_wid, node_hei;
 	private Color node_color;
 	private Node parent = null;
     private Node leftChild = null;
@@ -22,23 +21,7 @@ public class Node {
     
     public String getNodeData() {
         return node_data;
-    }
-    
-    public void setmyLabel(JLabel myLabel) {
-    	this.myLabel = myLabel;
-    }
-    
-    public JLabel getmyLabel() {
-    	return myLabel;
-    }    
-    
-    public void setIndex(int index) {
-    	this.index = index;
-    }
-    
-    public int getIndex() {
-    	return index;
-    }
+    } 
     
     public void setNodex(int node_x) {
     	this.node_x = node_x;

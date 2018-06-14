@@ -55,6 +55,7 @@ public class SplitPanel extends JFrame{
 	JLabel before_click_label = null;
 	JLabel resize_label[] = new JLabel[8];
 	JLabel before_resize_label[] = new JLabel[8];
+	Graphics g_line;
 	boolean isReversed = false;
 	boolean isDragged = false;
 	
@@ -69,7 +70,6 @@ public class SplitPanel extends JFrame{
         panel_Mid.setBackground(new Color(163, 202, 241));
         panel_Mid.setLayout(null);
         panel_Mid.addMouseListener(new MindMapPanelMouseListener());
-        panel_Mid.setDoubleBuffered(true);
         split2.setBackground(new Color(100, 100, 100));
         
         
@@ -187,8 +187,6 @@ public class SplitPanel extends JFrame{
 		panel_Mid.add(label);	//Label 마인드맵에 추가
 		jLabel_nodes.add(label);
 		node_for_Labels.add(root);
-		root.setmyLabel(label);
-		root.setIndex(i);
 		root.setNodex(node_x);
 		root.setNodey(node_y);
 		root.setNodewid(node_wid);
@@ -264,8 +262,6 @@ public class SplitPanel extends JFrame{
 
 				for(int i = 0; i < sibling_count; i++) {
 					double radius = 2 * Math.PI / sibling_count;
-					System.out.println(distance * (int)Math.sin(radius * i) + " "+  distance * (int)Math.cos(radius * i));
-					//System.out.println(i + "번째 지금은 " + temp_Node.getNodeData() + " " +now_Node.getNodex() + " " + now_Node.getNodey());
 					temp_Node.setNodex(now_Node.getNodex() + (int)(distance*Math.sin(radius * i)));
 					temp_Node.setNodey(now_Node.getNodey() + (int)(distance*Math.cos(radius * i)));
 					jLabel_nodes.get(node_for_Labels.indexOf(temp_Node)).setLocation(temp_Node.getNodex(), temp_Node.getNodey());
@@ -282,7 +278,6 @@ public class SplitPanel extends JFrame{
 		
 			temp_Node = now_Node;
 			while(true) {				
-				System.out.println(temp_Node.getNodeData());
 				if(temp_Node.getLeftChild() != null) {	//자식이 있다면
 					now_Node = temp_Node;
 					break;
@@ -318,7 +313,7 @@ public class SplitPanel extends JFrame{
 		}
 	}
 	
-	class NodeMouseListener implements MouseListener, MouseMotionListener {
+	class NodeMouseListener extends Frame implements MouseListener, MouseMotionListener {
 		JLabel label;
 		JPanel mid_panel;
 		Node myNode;
@@ -331,12 +326,26 @@ public class SplitPanel extends JFrame{
 			int i = jLabel_nodes.indexOf(label);
 			myNode = node_for_Labels.get(i);
 		}
-		 
+		
 		public void mouseDragged(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
 			int label_x = label.getX();
 			int label_y = label.getY();
+			
+			//System.out.println("Cursor: " + label.getCursor());
+			//System.out.println(label.getCursor() == Cursor.E_RESIZE_CURSOR);
+			if(label.getCursor().equals(Cursor.HAND_CURSOR)) {
+				System.out.println("으앙");
+				//label.setSize(label.getWidth() + x-before_x, label.getHeight());
+				label.setBounds(label.getX(), label.getY(), label.getWidth() + x-before_x, label.getHeight());
+				myNode.setNodewid(label.getWidth() + x-before_x);
+			}
+			else if(label.getCursor().equals(Cursor.E_RESIZE_CURSOR)) {
+				;
+			}
+			
+			//System.out.println((x - before_x) +" "+ (y - before_y));
 			
 			myNode.setNodex(label_x + x - before_x);
 			myNode.setNodey(label_y + y - before_y);
@@ -374,45 +383,64 @@ public class SplitPanel extends JFrame{
 				}
 			}
 			
-			painting_resize_box();
+			painting_line();
 			isDragged = true;
 		}
 
 		public void mouseMoved(MouseEvent e) {
-		}
-
-		public void mouseClicked(MouseEvent e) {
-		}
-
-		public void mouseEntered(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
 			int node_wid = myNode.getNodewid();
 			int node_hei = myNode.getNodehei();
 			
-			if(isReversed) {
-				if((x >= 0 && x <= 10) || (y >= 0 && y <= 10)) {
-					label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				}
-				else {
-					label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				}
+			if(x >= 0 && x <= 3 && y >= 0 && y <= 3) {
+				label.setCursor(new Cursor(Cursor.NW_RESIZE_CURSOR));
 			}
-			else {
-				
+			else if(x <= node_wid && x >= node_wid-3 && y >= 0 && y <= 3) {
+				label.setCursor(new Cursor(Cursor.NE_RESIZE_CURSOR));
 			}
+			else if(x >= 0 && x <= 3 && y <= node_hei && y >= node_hei-3) {
+				label.setCursor(new Cursor(Cursor.SW_RESIZE_CURSOR));
+			}
+			else if(x <= node_wid && x >= node_wid-3 && y <= node_hei && y >= node_hei-3) {
+				label.setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
+			}
+			else if(x >= 0 && x <= 3) {
+				label.setCursor(new Cursor(Cursor.W_RESIZE_CURSOR));
+			}
+			else if(x <= node_wid && x >= node_wid-3) {
+				label.setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
+			}
+			else if(y >= 0 && y <= 3) {
+				label.setCursor(new Cursor(Cursor.N_RESIZE_CURSOR));
+			}
+			else if(y <= node_hei && y >= node_hei-3) {
+				label.setCursor(new Cursor(Cursor.S_RESIZE_CURSOR));
+			}
+			else
+				label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+
+		public void mouseClicked(MouseEvent e) {
+		}
+
+		public void mouseEntered(MouseEvent e) {		
+			label.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		}
 
 		public void mouseExited(MouseEvent e) {
 		}
 
 		public void mousePressed(MouseEvent e) {
+			painting_line();
 			before_x = e.getX();
 			before_y = e.getY();
 			int red = myNode.getNodecolor().getRed();
 			int green = myNode.getNodecolor().getGreen();
 			int blue = myNode.getNodecolor().getBlue();
 			String redVal, greenVal, blueVal;
+			
+			
 			
 			if(red < 16)
 				redVal = 0 + Long.toHexString(red);
@@ -437,7 +465,6 @@ public class SplitPanel extends JFrame{
 					
 			
 			locating_resize_label(myNode.getNodex(), myNode.getNodey());
-			painting_resize_box();
 			
 			if(before_click_label == null) {	//맨처음
 				//resize_box[0] = new Rectangle(50, 50, 100, 100);
@@ -462,7 +489,7 @@ public class SplitPanel extends JFrame{
 				}
 			}			
 			
-			painting_resize_box();
+			//painting_resize_box();
 		}
 
 		public void mouseReleased(MouseEvent e) {
@@ -535,7 +562,7 @@ public class SplitPanel extends JFrame{
 			}
 			
 			//mid_panel.repaint();
-			painting_resize_box();
+			painting_line();
 			
 			for(int i = 0; i < resize_label.length; i++) {
 				before_resize_label[i] = resize_label[i];
@@ -607,11 +634,11 @@ public class SplitPanel extends JFrame{
 		
 	}
 	
-	public void painting_resize_box() {	//클래스 내 함수임 MouseListener의 함수가 아님
-		Graphics g = panel_Mid.getGraphics();
-		panel_Mid.paint(g);
-		g.drawRect(50, 50, 6, 6);
-		g.drawLine(myTree.root.getNodex(), myTree.root.getNodey(), myTree.root.getLeftChild().getNodex(), myTree.root.getLeftChild().getNodey());
+	public void painting_line() {	//클래스 내 함수임 MouseListener의 함수가 아님
+		g_line = panel_Mid.getGraphics();
+		panel_Mid.paint(g_line);
+		g_line.drawRect(50, 50, 6, 6);		
+		g_line.drawLine(myTree.root.getNodex(), myTree.root.getNodey(), myTree.root.getLeftChild().getNodex(), myTree.root.getLeftChild().getNodey());
 	}
 	
 	public void locating_resize_label(int real_x, int real_y) {
@@ -724,7 +751,7 @@ public class SplitPanel extends JFrame{
 		}
 
 		public void mouseClicked(MouseEvent arg0) {
-			painting_resize_box();
+			painting_line();
 		}
 
 		public void mouseEntered(MouseEvent arg0) {	
@@ -734,17 +761,17 @@ public class SplitPanel extends JFrame{
 		}
 
 		public void mousePressed(MouseEvent arg0) {	
-			painting_resize_box();
+			painting_line();
 		}
 
 		public void mouseReleased(MouseEvent arg0) {
 			if(isReversed == true ) {
 				node_back_again();
 				removing_before_resize_label();
-				panel_Mid.repaint();
+				//panel_Mid.repaint();
 				isReversed = false;
 			}
-			painting_resize_box();
+			painting_line();
 		}
 		
 		public void node_back_again() {
