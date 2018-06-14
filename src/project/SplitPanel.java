@@ -335,7 +335,7 @@ public class SplitPanel extends JFrame{
 			int label_y = label.getY();
 			
 			//System.out.println("Cursor: " + label.getCursor());
-			//System.out.println(label.getCursor() == Cursor.E_RESIZE_CURSOR);
+			//System.out.println(label.getCursor() + getCursorType((Cursor.E_RESIZE_CURSOR));
 			if(label.getCursor().equals(Cursor.HAND_CURSOR)) {
 				System.out.println("으앙");
 				//label.setSize(label.getWidth() + x-before_x, label.getHeight());
@@ -346,7 +346,6 @@ public class SplitPanel extends JFrame{
 				;
 			}
 			
-			//System.out.println((x - before_x) +" "+ (y - before_y));
 			
 			myNode.setNodex(label_x + x - before_x);
 			myNode.setNodey(label_y + y - before_y);
@@ -865,14 +864,21 @@ public class SplitPanel extends JFrame{
 		     changebtn.addActionListener(ChangeNodeListener);
 		     tool.add(changebtn);
 		     tool.addSeparator();
-
+		     
 		     JComboBox<String> combo = new JComboBox<String>();
 		     combo.addItem("click");
 		     combo.addItem("ㅗ");
 		     combo.addItem("ㅗㅗ");
 		     combo.addItem("ㅗㅗㅗ");
 		     tool.add(combo);
-		     
+		     openbtn.addActionListener(new OpenActionListener());
+		     save_otherbtn.addActionListener(new SaveAsActionListener());
+		     savebtn.addActionListener(new SaveActionListener());
+		     closebtn.addActionListener(new ActionListener(){
+		            public void actionPerformed(ActionEvent arg0){
+		                System.exit(0);//dispose는 창하나만 닫기이고 exit는 모든 창닫기인데 dispose같은 경우는jframe을 상속하애되서 일단 exit으로 함
+		                }
+		            });
 		     return tool;
 		}
 	}
@@ -894,131 +900,178 @@ public class SplitPanel extends JFrame{
 				return;
 			}
 			try {
-				JSONParser parser = new JSONParser(); 
+				JSONParser parser = new JSONParser();
+				//JSONObject jsonobject = (JSONObject) parser.parse(new FileReader(pathName));
 				JSONArray array = (JSONArray) parser.parse(new FileReader(pathName));
 				actionOpen(array);
 			}
-			catch (FileNotFoundException e3) {
+			catch (FileNotFoundException e3){
 				e3.printStackTrace();
-			} catch (IOException e3) {
+			} catch (IOException e3){
 				e3.printStackTrace();
-			} catch (ParseException e3) {
+			} catch (ParseException e3){
 				e3.printStackTrace();
 			}
 		}
-		
 		public void actionOpen(JSONArray array){//파일에서 불러온 내용 실행하기 - 근데 마우스로 클릭했을때 오른쪽에 안뜸
 	            panel_Mid.removeAll();
 	            panel_Mid.revalidate();
 	            panel_Mid.repaint();
 	            jLabel_nodes.clear();
 	            node_for_Labels.clear();
-	            Node root= null;
-			for(int i = 0; i<array.size(); i++) {
-				JSONObject obj = (JSONObject)array.get(i);
-		    	Node new_node = new Node((String)obj.get("NodeData"));
-				/*new_node.setmyLabel((JLabel)obj.get("MyData"));//데이터 넣는 코드 자꾸 널포인터 에러뜸
-				new_node.setIndex((int)obj.get("intdex"));
-				new_node.setNodex((int)obj.get("x"));
-				new_node.setNodey((int)obj.get("y"));
-				new_node.setNodewid((int)obj.get("w"));
-				new_node.setNodehei((int)obj.get("h"));
-				new_node.setNodeColor((Color)obj.get("Color"));
-				new_node.setParent((Node)obj.get("parent"));
-				new_node.setLeftChild((Node)obj.get("LChil"));
-				new_node.setRightSibling((Node)obj.get("RSbling"));*/
-				System.out.println((String)obj.get("NodeData"));
-				System.out.println((JLabel)obj.get("MyData"));
-				System.out.println((int)obj.get("intdex"));
-				System.out.println((int)obj.get("x"));
-				System.out.println((int)obj.get("y"));
-				System.out.println((int)obj.get("h"));
-				System.out.println((int)obj.get("w"));
-				System.out.println((Color)obj.get("Color"));
-				System.out.println(((Node)obj.get("parent")));
-				System.out.println((Node)obj.get("LChil"));
-				System.out.println((Node)obj.get("RSbling"));
-
-				if(i ==0) myTree.root = new_node;
-				}
-			draw_tree2(root, 0, panel_Mid);
-		}
-		public void draw_tree2(Node root, int i, JPanel mid_panel) { 
-			JLabel label = new JLabel(root.getNodeData());
-			//int check = 0, node_x = i*60, node_y = i*60, node_wid = 60, node_hei = 40;
-			Node check_node = root;
-			//label.setSize(node_wid, node_hei);
-			label.setOpaque(true);
+	            System.out.println("array size : " + array.size());
+	            String arr[] = new String[array.size()];
+	            String temptext = "start";
+	            for(int i = 1; i<array.size()-1; i++) {//마지막은 텍스트 내용이여서 -1
+	            	arr[i] = "\n"+i;
+	            	temptext = temptext.concat(arr[i]);
+	            }
+	            myDrawPanel.setText(temptext);
+				myTree.getTextPanel(myDrawPanel.getText());
+				draw_Tree(myTree.root, 0, panel_Mid);
+				recoloring_tree();
+				relocating_tree(myTree.root);
+    			panel_Mid.repaint();
+    			panel_Mid.removeAll();
+				panel_Mid.revalidate();
+				int j = 0;
+	    			for(Node label : SplitPanel.node_for_Labels) {
+	    				System.out.println("처음 노드 이름 :"+label.getNodeData() );
+	    				JSONObject obj = (JSONObject)array.get(j);
+			    		int x = Integer.parseInt((String) obj.get("x"));
+			    		int y = Integer.parseInt((String) obj.get("y"));
+			   			int w = Integer.parseInt((String) obj.get("w"));
+			   			int h = Integer.parseInt((String) obj.get("h"));
+			   			int index = Integer.parseInt((String) obj.get("index"));
+			   			String Node_Data = (String)obj.get("NodeData");
+		    			String MyLabel = (String)obj.get("MyLabel");
+		    			// color = (Color)obj.get("Color");
+		    			//Node LChil = (Node)obj.get("LChil");
+		    			//Node Parent = (Node)obj.get("Parent");
+		    			//Node RSbling = (Node)obj.get("RSbling");
+	    				label.setNodex(x);
+	    				label.setNodey(y);
+	    				label.setNodewid(w);
+	    				label.setNodehei(h);
+	    				label.setData(Node_Data);
+	    				//label.setIndex(index);
+	    				//label.setmyLabel(MyLabel);
+	    				//label.setNodeColor(color);
+	    				//label.setLeftChild(LChil);
+	    				//label.setParent(Parent);
+	    				//label.setRightSibling(RSbling);
+	    				/*if(j == 0) {
+	    					myTree.root.setData(Node_Data);
+	    					myTree.root.setNodex(x);
+	    					myTree.root.setNodey(x);
+	    					myTree.root.setNodehei(h);
+	    					myTree.root.setNodewid(w);
+	    					System.out.println("바뀐루트 x 값 :"+myTree.root.getNodex());
+		    				System.out.println("바뀐루트 노드 이름 :"+myTree.root.getNodeData());
+	    				}*/
+	    				j++;
+	    				System.out.println("바뀐 x 값 :"+label.getNodex());
+	    				System.out.println("바뀐 노드 이름 :"+label.getNodeData());
+	    			}
+	    			int num = array.size();//textarea집어 넣기
+	    			JSONObject obj = (JSONObject)array.get(num-1);
+	    			String paneltext = (String)obj.get("textarea");
+	    			System.out.println(paneltext);
+	    			myDrawPanel.setText(paneltext);
+	    			
+	    			draw_Tree2(myTree.root,0, panel_Mid, array);
+	            }
+	       }
+	public void draw_Tree2(Node root, int i ,JPanel mid_panel, JSONArray array) {
+		JLabel label = new JLabel(root.getNodeData());
+		int check = 0;
+		Node check_node = root;
+		JSONObject obj = (JSONObject)array.get(i);
+		int x = Integer.parseInt((String) obj.get("x"));
+		int y = Integer.parseInt((String) obj.get("y"));
+		int w = Integer.parseInt((String) obj.get("w"));
+		int h = Integer.parseInt((String) obj.get("h"));
+		int index = Integer.parseInt((String) obj.get("index"));
+		String Node_Data = (String)obj.get("NodeData");
+		String MyLabel = (String)obj.get("MyLabel");
 		
-			int random_r, random_g, random_b;
-			random_r = (int)(Math.random() * 256);
-			random_g = (int)(Math.random() * 256);
-			random_b = (int)(Math.random() * 256);
-			Color random_color = new Color(random_r, random_g, random_b);
-			label.setBackground(random_color);
-			//root.setNodeColor(random_color);
-			label.setBorder(new LineBorder(new Color(82, 130, 184), 2));
-			label.setLocation(root.getNodex(), root.getNodey());
-			label.setHorizontalAlignment(SwingConstants.CENTER);
-			panel_Mid.add(label);	//Label 마인드맵에 추가
-			jLabel_nodes.add(label);	
-			node_for_Labels.add(root);
-				/*root.setmyLabel(label);
-				root.setIndex(i);
-				root.setNodex(node_x);
-				root.setNodey(node_y);
-				root.setNodewid(node_wid);
-				root.setNodehei(node_hei);
-				 */
-			NodeMouseListener nodeMouse = new NodeMouseListener(label, panel_Mid);
-			label.addMouseListener(nodeMouse);
-       
-				// 자식 노드가 존재한다면
-			if(root.getLeftChild() != null)
-				draw_Tree(root.getLeftChild(), i + 1, panel_Mid);
-	         
-				// 형제 노드가 존재한다면
-			if(root.getRightSibling() != null)
-				draw_Tree(root.getRightSibling(), i + 1, panel_Mid);
-			panel_Mid.repaint();
-		}
-    }
+		label.setSize(w, h);/////////이건또 뭐고????
+		label.setLocation(x, y);
+		label.setName(Node_Data);
+		label.setOpaque(true);
+		int random_r, random_g, random_b;
+		random_r = (int)(Math.random() * 256);
+		random_g = (int)(Math.random() * 256);
+		random_b = (int)(Math.random() * 256);
+		Color random_color = new Color(random_r, random_g, random_b);
+		label.setBackground(random_color);
+		root.setNodeColor(random_color);
 
+		label.setBorder(new LineBorder(new Color(82, 130, 184), 2));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		panel_Mid.add(label);	//Label 마인드맵에 추가
+		jLabel_nodes.add(label);
+		node_for_Labels.add(root);
+		//root.setmyLabel(label);//////////이건 뭐임???
+		root.setNodewid(w);//myTree.root.getNodewid());
+		root.setNodehei(h);//myTree.root.getNodehei());
+		root.setNodex(x);//myTree.root.getNodex());
+		root.setNodey(y);//myTree.root.getNodey());
+		root.setData(Node_Data);
+		
+		NodeMouseListener nodeMouse = new NodeMouseListener(label, mid_panel);
+		label.addMouseListener(nodeMouse);
+		label.addMouseMotionListener(nodeMouse);
+       
+		// 자식 노드가 존재한다면
+	    if(root.getLeftChild() != null)
+	    	draw_Tree2(root.getLeftChild(), i + 1, panel_Mid, array);
+	         
+	    // 형제 노드가 존재한다면
+	    if(root.getRightSibling() != null)
+	    	draw_Tree2(root.getRightSibling(), i + 1, panel_Mid, array);
+	    	
+	   panel_Mid.repaint();
+	}
 	class SaveActionListener implements ActionListener{//save-메뉴바 만들기 예제로 c드라이브에 생성됨
 		private JFileChooser chooser;
 		public SaveActionListener() {
 			chooser = new JFileChooser();
 		}
 		public void actionPerformed(ActionEvent e) {
-			 JSONArray list = new JSONArray();
-			    //obj.put("textarea", SplitPanel.myDrawPanel.getText());//textarea내용 자체 저장코드
-			    int i = 0;
+			JSONArray list = new JSONArray();
+			JSONObject jsonobject = new JSONObject();
+			JSONObject paneltext = new JSONObject();
+			paneltext.put("textarea", myDrawPanel.getText());//textarea내용 자체 저장코드
 			     for(Node label : SplitPanel.node_for_Labels) {//라벨 정보들을 저장하는 코드
-			    	 JSONObject obj = new JSONObject();
-					    String numStr1 = String.valueOf(label.getNodex());
-				    	obj.put("x", numStr1);
-				    	String numStr2 = String.valueOf(label.getNodey());
-				    	obj.put("y", numStr2);
-				    	String numStr3 = String.valueOf(label.getNodehei());
-				    	obj.put("h", numStr3);
-				    	String numStr4 = String.valueOf(label.getNodewid());
-				    	obj.put("w", numStr4);
-				    	//String numStr5 = String.valueOf(label.getIndex());
-				    	//obj.put("index", numStr5);
-				    	String numStr7 = String.valueOf(label.getLeftChild());
-				    	obj.put("LChil", numStr7);
-				    	//String numStr8 = String.valueOf(label.getmyLabel());
-				    	//obj.put("MyLabel", numStr8);
-				    	String numStr9 = String.valueOf(label.getNodecolor());
-				    	obj.put("Color", numStr9);
-				    	String numStr10 = String.valueOf(label.getNodeData());
-				    	obj.put("NodeData", numStr10);
-				    	String numStr11 = String.valueOf(label.getParent());
-				    	obj.put("Parent", numStr11);
-				    	String numStr12 = String.valueOf(label.getRightSibling());
-				    	obj.put("RSbling", numStr12);
-				    	list.add(obj);
-			      }
+					JSONObject obj = new JSONObject();
+				    String numStr1 = String.valueOf(label.getNodex());
+			    	obj.put("x", numStr1);
+			    	String numStr2 = String.valueOf(label.getNodey());
+			    	obj.put("y", numStr2);
+			    	String numStr3 = String.valueOf(label.getNodehei());
+			    	obj.put("h", numStr3);
+			    	String numStr4 = String.valueOf(label.getNodewid());
+			    	obj.put("w", numStr4);
+			    	//String numStr5 = String.valueOf(label.getIndex());
+			    	//obj.put("index", numStr5);
+			    	String numStr7 = String.valueOf(label.getLeftChild());
+			    	obj.put("LChil", numStr7);
+			    	//String numStr8 = String.valueOf(label.getmyLabel());
+			    	//obj.put("MyLabel", numStr8);
+			    	String numStr9 = String.valueOf(label.getNodecolor());
+			    	obj.put("Color", numStr9);
+			    	String numStr10 = String.valueOf(label.getNodeData());
+			    	obj.put("NodeData", numStr10);
+			    	String numStr11 = String.valueOf(label.getParent());
+			    	obj.put("Parent", numStr11);
+			    	String numStr12 = String.valueOf(label.getRightSibling());
+			    	obj.put("RSbling", numStr12);
+			    	list.add(obj);
+			     }
+			     	list.add(paneltext);
+			    	jsonobject.put("MyLabel", list);
 			try {
 				FileWriter file = new FileWriter("C:\\Users\\There\\Desktop\\메뉴바 만들기 예제.json");
 				file.write(list.toJSONString());
@@ -1050,8 +1103,10 @@ public class SplitPanel extends JFrame{
 			if (userSelection == chooser.APPROVE_OPTION) {
 			    File fileToSave = chooser.getSelectedFile();
 			    System.out.println("Save as file: " + fileToSave.getAbsolutePath());//클락한 경로
+			    JSONObject jsonobject = new JSONObject();
 			    JSONArray list = new JSONArray();
-			    //obj.put("textarea", SplitPanel.myDrawPanel.getText());//textarea내용 자체 저장코드
+			    JSONObject paneltext = new JSONObject();
+				paneltext.put("textarea", myDrawPanel.getText());//textarea내용 자체 저장코드
 			     for(Node label : SplitPanel.node_for_Labels) {//라벨 정보들을 저장하는 코드
 					JSONObject obj = new JSONObject();
 				    String numStr1 = String.valueOf(label.getNodex());
@@ -1076,21 +1131,17 @@ public class SplitPanel extends JFrame{
 			    	obj.put("Parent", numStr11);
 			    	String numStr12 = String.valueOf(label.getRightSibling());
 			    	obj.put("RSbling", numStr12);
-			    	list.add(obj+"i");
-			      }
-		    /*
-		    for(JLabel label : SplitPanel.jLabel_nodes) {
-		    	String numStr13 = String.valueOf(label.);
-		    	obj.add();
-		    	String numStr13 = String.valueOf(label.);
-		    }*/
-		    //String what = SplitPanel.myDrawPanel.getText();
+			    	list.add(obj);
+			     }
+			     	list.add(paneltext);
+			    	jsonobject.put("MyLabel", list);
+
 		     try {
 		      FileWriter file = new FileWriter(fileToSave+".json");//이름 저장
 		      	file.write(list.toJSONString());
 		   		file.flush();
 		  		file.close();
-		  		System.out.println(list);
+		  		System.out.println(jsonobject);
 			}catch (IOException e2) {
 		   		e2.printStackTrace();
 		   	}
