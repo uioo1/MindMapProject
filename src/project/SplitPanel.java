@@ -35,13 +35,13 @@ import org.json.simple.*;
 public class SplitPanel extends JFrame{
 	MenuBar menubar = new MenuBar();	
 	ToolBar toolbar = new ToolBar();
-	public static JPanel panel_Mid;	//ï¿½ï¿½ï¿½îµ¥ ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½Ð³ï¿½ ï¿½ï¿½ï¿½ï¿½
-	JPanel panel_Left_Background;	//textarea ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½butoonï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Ð³ï¿½
-	JPanel panel_Right;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ ï¿½Ð³ï¿½ ï¿½ï¿½ï¿½ï¿½
+	public static JPanel panel_Mid;	//°¡¿îµ¥ ¸¶ÀÎµå¸ÊÆÐ³Î Á¤ÀÇ
+	JPanel panel_Left_Background;	//textarea ¿Í Àû¿ëbutoonÀ» °¡Áö°íÀÖ´Â ÆÐ³Î
+	JPanel panel_Right;	//¿À¸¥ÂÊ ¼Ó¼º ÆÐ³Î Á¤ÀÇ
 	JPanel panel_Background;
 	public static ArrayList<JLabel> jLabel_nodes = new ArrayList<JLabel>();
 	public static ArrayList<Node> node_for_Labels = new ArrayList<Node>();
-	public static JTextArea myDrawPanel;	//textarea ï¿½ï¿½ï¿½ï¿½
+	public static JTextArea myDrawPanel;	//textarea Á¤ÀÇ
 	JTextField node_textfield = new JTextField();
 	JTextField node_xfield = new JTextField();
 	JTextField node_yfield = new JTextField();
@@ -55,8 +55,15 @@ public class SplitPanel extends JFrame{
 	JLabel before_click_label = null;
 	JLabel resize_label[] = new JLabel[8];
 	JLabel before_resize_label[] = new JLabel[8];
-
+<<<<<<< HEAD
 	Graphics g_line;
+=======
+	Rectangle[] resize_box = new Rectangle[8];
+	JLabel Open_label[] = new JLabel[20];
+	JLabel before_Open_label[] = new JLabel[20];
+	Rectangle[] Open_box = new Rectangle[20];
+	boolean isNotFirst = false;
+>>>>>>> MindMapProject/openë§Œë“¤ê¸°
 	boolean isReversed = false;
 	boolean isDragged = false;
 	
@@ -65,7 +72,7 @@ public class SplitPanel extends JFrame{
         split.setDividerLocation( 300 );
         split2.setDividerLocation( 800 );
         
-        /////////////////ï¿½ï¿½ï¿½îµ¥ ï¿½ï¿½ï¿½Îµï¿½ï¿½ ï¿½Ð³ï¿½
+        /////////////////°¡¿îµ¥ ¸¶ÀÎµå¸Ê ÆÐ³Î
         
         panel_Mid = new JPanel();
         panel_Mid.setBackground(new Color(163, 202, 241));
@@ -74,25 +81,25 @@ public class SplitPanel extends JFrame{
         split2.setBackground(new Color(100, 100, 100));
         
         
-        /////////////////ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½Ð³ï¿½+ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½
+        /////////////////¿ÞÂÊ ÅØ½ºÆ® ÆÐ³Î+´Ù ´ã´Â ÆÐ³Î
         panel_Left_Background = new JPanel();
         myDrawPanel = new JTextArea(30,25);
-        JButton textbutton = new JButton("ï¿½ï¿½ï¿½ï¿½");       
+        JButton textbutton = new JButton("Àû¿ë");       
 		
 		panel_Left_Background.setBackground(new Color(255, 255, 255));
 		panel_Left_Background.setLayout(new BorderLayout(5,5));
 		panel_Left_Background.add(new JScrollPane( myDrawPanel ), BorderLayout.CENTER );
 		panel_Left_Background.add(textbutton, BorderLayout.SOUTH );
-	    textbutton.addActionListener(TextPanelActionListener);	//Action ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ±ï¿½
+	    textbutton.addActionListener(TextPanelActionListener);	//Action ¸®½º³Ê ´Þ±â
 
 				
-        ////////////////ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½
+        ////////////////¿À¸¥ÂÊ ¼³Á¤ ÆÐ³Î
         panel_Right = new JPanel();
         panel_Right.setBackground(new Color(174, 246, 160)); 
         panel_Right.setPreferredSize( new Dimension( 350, 350 ) );
         panel_Right.setSize(200,600);
     	GridLayout gridAttPane = new GridLayout(8,2,0,30);
-    	JLabel attribute_label = new JLabel("ï¿½Ó¼ï¿½");
+    	JLabel attribute_label = new JLabel("¼Ó¼º");
     	attribute_label.setOpaque(true);
     	attribute_label.setHorizontalAlignment(SwingConstants.CENTER);
     	attribute_label.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -118,16 +125,16 @@ public class SplitPanel extends JFrame{
 		panel_Right.add(new JLabel("  COLOR : "));		
 		panel_Right.add(node_colorfield);
 		
-		JButton button_attr = new JButton("ï¿½ï¿½ï¿½ï¿½");
+		JButton button_attr = new JButton("º¯°æ");
 		panel_Right.add(button_attr);		
 		button_attr.addActionListener(ChangeNodeListener);
 		
 		panel_Right.setLayout(gridAttPane);
 		
-		//Æ²ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ ï¿½ß°ï¿½
+		//Æ²¿¡ ½ºÇÃ¸´ Ãß°¡
 		split.setLeftComponent(panel_Left_Background);
 		split.setRightComponent(split2);
-		//ï¿½ï¿½ï¿½Ã¸ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ß°ï¿½
+		//½ºÇÃ¸´ ÇÏ³ªÀ§¿¡ ¹Ìµå¿Í ¶óÀÌÆ® Ãß°¡
 		split2.setLeftComponent(panel_Mid);		
 		split2.setRightComponent(panel_Right);
 		
@@ -185,7 +192,7 @@ public class SplitPanel extends JFrame{
 		label.setLocation(node_x, node_y);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		panel_Mid.add(label);	//Label ï¿½ï¿½ï¿½Îµï¿½Ê¿ï¿½ ï¿½ß°ï¿½
+		panel_Mid.add(label);	//Label ¸¶ÀÎµå¸Ê¿¡ Ãß°¡
 		jLabel_nodes.add(label);
 		node_for_Labels.add(root);
 		root.setNodex(node_x);
@@ -197,11 +204,11 @@ public class SplitPanel extends JFrame{
 		label.addMouseListener(nodeMouse);
 		label.addMouseMotionListener(nodeMouse);
        
-		// ï¿½Ú½ï¿½ ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´Ù¸ï¿½
+		// ÀÚ½Ä ³ëµå°¡ Á¸ÀçÇÑ´Ù¸é
 	    if(root.getLeftChild() != null)
 	    	draw_Tree(root.getLeftChild(), i + 1, panel_Mid);
 	         
-	    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´Ù¸ï¿½
+	    // ÇüÁ¦ ³ëµå°¡ Á¸ÀçÇÑ´Ù¸é
 	    if(root.getRightSibling() != null)
 	    	draw_Tree(root.getRightSibling(), i + 1, panel_Mid);
 	    	
@@ -231,8 +238,7 @@ public class SplitPanel extends JFrame{
 				while(myNode.getRightSibling() != null) {
 					myNode = myNode.getRightSibling();
 					myNode.setNodeColor(color);
-					jLabel_nodes.get(node_for_Labels.indexOf(myNode)).setBackground(color);
-					//jLabel_nodes.get(node_for_Labels.indexOf(myNode));
+					myNode.myLabel.setBackground(color);
 				}
 			}
 		}
@@ -355,7 +361,7 @@ public class SplitPanel extends JFrame{
 			node_yfield.setText(Integer.toString(label_y + y - before_y));			
 			label.setLocation(label_x + x - before_x, label_y + y - before_y);
 			
-			if(before_click_label == null) {	//ï¿½ï¿½Ã³ï¿½ï¿½
+			if(before_click_label == null) {	//¸ÇÃ³À½
 				removing_now_resize_label();
 				locating_resize_label(label_x + x - before_x, label_y + y - before_y);
 				isReversed = true;
@@ -468,7 +474,7 @@ public class SplitPanel extends JFrame{
 			
 			locating_resize_label(myNode.getNodex(), myNode.getNodey());
 			
-			if(before_click_label == null) {	//ï¿½ï¿½Ã³ï¿½ï¿½
+			if(before_click_label == null) {	//¸ÇÃ³À½
 				//resize_box[0] = new Rectangle(50, 50, 100, 100);
 				reversing_node();
 			}
@@ -513,7 +519,7 @@ public class SplitPanel extends JFrame{
 			
 			label.setLocation(real_x, real_y);
 			
-			if(before_click_label == null) {	//ï¿½ï¿½Ã³ï¿½ï¿½
+			if(before_click_label == null) {	//¸ÇÃ³À½
 				isReversed = true;
 			}
 			else if(isReversed == false) {
@@ -636,12 +642,18 @@ public class SplitPanel extends JFrame{
 		
 	}
 	
-
+<<<<<<< HEAD
 	public void painting_line() {	//í´ëž˜ìŠ¤ ë‚´ í•¨ìˆ˜ìž„ MouseListenerì˜ í•¨ìˆ˜ê°€ ì•„ë‹˜
 		g_line = panel_Mid.getGraphics();
 		panel_Mid.paint(g_line);
 		g_line.drawRect(50, 50, 6, 6);		
 		g_line.drawLine(myTree.root.getNodex(), myTree.root.getNodey(), myTree.root.getLeftChild().getNodex(), myTree.root.getLeftChild().getNodey());
+=======
+	public void painting_resize_box() {	//Å¬·¡½º ³» ÇÔ¼öÀÓ MouseListenerÀÇ ÇÔ¼ö°¡ ¾Æ´Ô
+		Graphics g = panel_Mid.getGraphics();
+		panel_Mid.paint(g);
+		g.drawRect(50, 50, 6, 6);
+>>>>>>> MindMapProject/openë§Œë“¤ê¸°
 	}
 	
 	public void locating_resize_label(int real_x, int real_y) {
@@ -701,17 +713,27 @@ public class SplitPanel extends JFrame{
 	ActionListener TextPanelActionListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			myTree = new Tree();
+<<<<<<< HEAD
 			panel_Mid.removeAll();
 			panel_Mid.revalidate();
 			panel_Mid.repaint();
+=======
+				panel_Mid.removeAll();
+				panel_Mid.revalidate();
+				panel_Mid.repaint();
+>>>>>>> MindMapProject/openë§Œë“¤ê¸°
 			jLabel_nodes.clear();
 			node_for_Labels.clear();
-			myTree.getTextPanel(myDrawPanel.getText());	//treeï¿½ï¿½ textPanelï¿½ï¿½ï¿½ï¿½ ï¿½Ñ°ï¿½ï¿½Ö±ï¿½
+			myTree.getTextPanel(myDrawPanel.getText());	//tree¿¡ textPanel³»¿ë ³Ñ°ÜÁÖ±â
 			draw_Tree(myTree.root, 0, panel_Mid);
 			recoloring_tree();
 			relocating_tree(myTree.root);
 			panel_Mid.repaint();
 			before_click_label = null;
+<<<<<<< HEAD
+=======
+		//	isNotFirst = true;
+>>>>>>> MindMapProject/openë§Œë“¤ê¸°
 		}
 	};
 	
@@ -807,12 +829,12 @@ public class SplitPanel extends JFrame{
 	        JMenu_Save.addActionListener(new SaveActionListener());
 	        JMenu_Close.addActionListener(new ActionListener(){
 	            public void actionPerformed(ActionEvent arg0){
-	                System.exit(0);//disposeï¿½ï¿½ Ã¢ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½Ý±ï¿½ï¿½Ì°ï¿½ exitï¿½ï¿½ ï¿½ï¿½ï¿½ Ã¢ï¿½Ý±ï¿½ï¿½Îµï¿½ disposeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½jframeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¾ÖµÇ¼ï¿½ ï¿½Ï´ï¿½ exitï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+	                System.exit(0);//dispose´Â Ã¢ÇÏ³ª¸¸ ´Ý±âÀÌ°í exit´Â ¸ðµç Ã¢´Ý±âÀÎµ¥ dispose°°Àº °æ¿ì´ÂjframeÀ» »ó¼ÓÇÏ¾ÖµÇ¼­ ÀÏ´Ü exitÀ¸·Î ÇÔ
 	                }
 	            });
 	        f.add(JMenu_New);
 	        f.add(JMenu_Open);
-	        f.addSeparator();//ï¿½Ð¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	        f.addSeparator();//ºÐ¸®¼± »ðÀÔ
 	        f.add(JMenu_Save);
 	        f.add(JMenu_SaveAs);
 	        
@@ -835,51 +857,51 @@ public class SplitPanel extends JFrame{
 			 JToolBar tool = new JToolBar("Kitae Menu");
 			 
 		     tool.setBackground(Color.gray);
-		     JButton newbtn = new JButton("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½");
+		     JButton newbtn = new JButton("»õ·Î ¸¸µé±â");
 		     tool.add(newbtn);
-		     newbtn.setToolTipText("ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½");
+		     newbtn.setToolTipText("¸¶ÀÎµå ¸Ê ÆÄÀÏÀ» »õ·Î »ý¼ºÇÕ´Ï´Ù");
 		     tool.addSeparator();
-		     JButton openbtn = new JButton("ï¿½ï¿½ï¿½ï¿½");
+		     JButton openbtn = new JButton("¿­±â");
 		     tool.add(openbtn);
-		     openbtn.setToolTipText("ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½É´Ï´ï¿½");
+		     openbtn.setToolTipText("¸¶ÀÎµå ¸Ê ÆÄÀÏÀ» ºÒ·¯¿É´Ï´Ù");
 		     tool.addSeparator();
-		     JButton savebtn = new JButton("ï¿½ï¿½ï¿½ï¿½");
+		     JButton savebtn = new JButton("ÀúÀå");
 		     tool.add(savebtn);
-		     savebtn.setToolTipText("ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½");
-		     /*JButton btn3=new JButton(new ImageIcon("save.jpg"));//ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È³ï¿½Å¸ï¿½ï¿½
+		     savebtn.setToolTipText("ÀÛ¾÷ÇÑ ³»¿ëÀ» ÀúÀåÇÕ´Ï´Ù");
+		     /*JButton btn3=new JButton(new ImageIcon("save.jpg"));//ÀúÀå ÀÌ¹ÌÁöÀÎµ¥ ³»²¨¿¡ ÀÌ¹ÌÁö°¡ ¾ø´ÂÁö ¾È³ªÅ¸³²
 		     tool.add(btn3);*/
 		     tool.addSeparator();
-		     JButton save_otherbtn = new JButton("ï¿½Ù¸ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
+		     JButton save_otherbtn = new JButton("´Ù¸¥ ÀÌ¸§À¸·Î ÀúÀå");
 		     tool.add(save_otherbtn);
-		     save_otherbtn.setToolTipText("ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½");
+		     save_otherbtn.setToolTipText("ÀÛ¾÷ÇÑ ³»¿ëÀ» »õ·Î¿î ÆÄÀÏ·Î ÀúÀåÇÕ´Ï´Ù");
 		     tool.addSeparator();
-		     JButton closebtn = new JButton("ï¿½Ý±ï¿½");
+		     JButton closebtn = new JButton("´Ý±â");
 		     tool.add(closebtn);
-		     closebtn.setToolTipText("ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½");
+		     closebtn.setToolTipText("ÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù");
 		     tool.addSeparator();
-		     JButton applybtn = new JButton("ï¿½ï¿½ï¿½ï¿½");
+		     JButton applybtn = new JButton("Àû¿ë");
 		     tool.add(applybtn);
-		     applybtn.addActionListener(TextPanelActionListener);	//Action ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ±ï¿½
-		     applybtn.setToolTipText("ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½");
+		     applybtn.addActionListener(TextPanelActionListener);	//Action ¸®½º³Ê ´Þ±â
+		     applybtn.setToolTipText("ÅØ½ºÆ® ÆíÁý ³»¿ëÀ» ¸¶ÀÎµå ¸Ê¿¡ Àû¿ëÇÕ´Ï´Ù");
 		     tool.addSeparator();
-		     JButton changebtn = new JButton("ï¿½ï¿½ï¿½ï¿½");
-		     changebtn.setToolTipText("ï¿½Ó¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½");
+		     JButton changebtn = new JButton("º¯°æ");
+		     changebtn.setToolTipText("¼Ó¼º º¯°æ ³»¿ëÀ» ¸¶ÀÎµå ¸Ê¿¡ Àû¿ëÇÕ´Ï´Ù");
 		     changebtn.addActionListener(ChangeNodeListener);
 		     tool.add(changebtn);
 		     tool.addSeparator();
 		     
 		     JComboBox<String> combo = new JComboBox<String>();
 		     combo.addItem("click");
-		     combo.addItem("ï¿½ï¿½");
-		     combo.addItem("ï¿½Ç¤ï¿½");
-		     combo.addItem("ï¿½Ç¤Ç¤ï¿½");
+		     combo.addItem("¤Ç");
+		     combo.addItem("¤Ç¤Ç");
+		     combo.addItem("¤Ç¤Ç¤Ç");
 		     tool.add(combo);
 		     openbtn.addActionListener(new OpenActionListener());
 		     save_otherbtn.addActionListener(new SaveAsActionListener());
 		     savebtn.addActionListener(new SaveActionListener());
 		     closebtn.addActionListener(new ActionListener(){
 		            public void actionPerformed(ActionEvent arg0){
-		                System.exit(0);//disposeï¿½ï¿½ Ã¢ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½Ý±ï¿½ï¿½Ì°ï¿½ exitï¿½ï¿½ ï¿½ï¿½ï¿½ Ã¢ï¿½Ý±ï¿½ï¿½Îµï¿½ disposeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½jframeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¾ÖµÇ¼ï¿½ ï¿½Ï´ï¿½ exitï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		                System.exit(0);//dispose´Â Ã¢ÇÏ³ª¸¸ ´Ý±âÀÌ°í exit´Â ¸ðµç Ã¢´Ý±âÀÎµ¥ dispose°°Àº °æ¿ì´ÂjframeÀ» »ó¼ÓÇÏ¾ÖµÇ¼­ ÀÏ´Ü exitÀ¸·Î ÇÔ
 		                }
 		            });
 		     return tool;
@@ -887,19 +909,19 @@ public class SplitPanel extends JFrame{
 	}
 
 
-	public class OpenActionListener implements ActionListener {//ï¿½ï¿½ï¿½ï¿½ Ã¢ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+	public class OpenActionListener implements ActionListener {//¿­±â Ã¢¸¸µå´Â ÄÚµå
 		private JFileChooser chooser;
 		JSONParser parser = new JSONParser();
 		public OpenActionListener() {
 			chooser = new JFileChooser();
 		}
-		public void actionPerformed(ActionEvent e) {//jsonï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+		public void actionPerformed(ActionEvent e) {//jsonÆÄÀÏÀ» ºÒ·¯¿À´Â ÄÚµå
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("json","json");
 			chooser.setFileFilter(filter);
 			int ret = chooser.showOpenDialog(null);
-			String pathName = chooser.getSelectedFile().getPath();//Å¬ï¿½ï¿½ï¿½Ñ°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			String pathName = chooser.getSelectedFile().getPath();//Å¬¸¯ÇÑ°Í °æ·ÎÀúÀå
 			if(ret != JFileChooser.APPROVE_OPTION) {
-				JOptionPane.showMessageDialog(null,"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½", "ï¿½ï¿½ï¿½",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null,"ÆÄÀÏÀ» ¼±ÅÃÇÏÁö ¾Ê¾Ò½À´Ï´Ù", "°æ°í",JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			try {
@@ -916,8 +938,12 @@ public class SplitPanel extends JFrame{
 				e3.printStackTrace();
 			}
 		}
+<<<<<<< HEAD
 		
 		public void actionOpen(JSONArray array){//íŒŒì¼ì—ì„œ ë¶ˆëŸ¬ì˜¨ ë‚´ìš© ì‹¤í–‰í•˜ê¸° - ê·¼ë° ë§ˆìš°ìŠ¤ë¡œ í´ë¦­í–ˆì„ë•Œ ì˜¤ë¥¸ìª½ì— ì•ˆëœ¸
+=======
+		public void actionOpen(JSONArray array){//ÆÄÀÏ¿¡¼­ ºÒ·¯¿Â ³»¿ë ½ÇÇàÇÏ±â - ±Ùµ¥ ¸¶¿ì½º·Î Å¬¸¯ÇßÀ»¶§ ¿À¸¥ÂÊ¿¡ ¾È¶ä
+>>>>>>> MindMapProject/openë§Œë“¤ê¸°
 	            panel_Mid.removeAll();
 	            panel_Mid.revalidate();
 	            panel_Mid.repaint();
@@ -926,7 +952,7 @@ public class SplitPanel extends JFrame{
 	            System.out.println("array size : " + array.size());
 	            String arr[] = new String[array.size()];
 	            String temptext = "start";
-	            for(int i = 1; i<array.size()-1; i++) {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½ -1
+	            for(int i = 1; i<array.size()-1; i++) {//¸¶Áö¸·Àº ÅØ½ºÆ® ³»¿ëÀÌ¿©¼­ -1
 	            	arr[i] = "\n"+i;
 	            	temptext = temptext.concat(arr[i]);
 	            }
@@ -934,13 +960,13 @@ public class SplitPanel extends JFrame{
 				myTree.getTextPanel(myDrawPanel.getText());
 				draw_Tree(myTree.root, 0, panel_Mid);
 				recoloring_tree();
-				relocating_tree(myTree.root);
+				relocating_tree();
     			panel_Mid.repaint();
     			panel_Mid.removeAll();
 				panel_Mid.revalidate();
 				int j = 0;
 	    			for(Node label : SplitPanel.node_for_Labels) {
-	    				System.out.println("Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ :"+label.getNodeData() );
+	    				System.out.println("Ã³À½ ³ëµå ÀÌ¸§ :"+label.getNodeData() );
 	    				JSONObject obj = (JSONObject)array.get(j);
 			    		int x = Integer.parseInt((String) obj.get("x"));
 			    		int y = Integer.parseInt((String) obj.get("y"));
@@ -958,7 +984,7 @@ public class SplitPanel extends JFrame{
 	    				label.setNodewid(w);
 	    				label.setNodehei(h);
 	    				label.setData(Node_Data);
-	    				//label.setIndex(index);
+	    				label.setIndex(index);
 	    				//label.setmyLabel(MyLabel);
 	    				//label.setNodeColor(color);
 	    				//label.setLeftChild(LChil);
@@ -970,14 +996,14 @@ public class SplitPanel extends JFrame{
 	    					myTree.root.setNodey(x);
 	    					myTree.root.setNodehei(h);
 	    					myTree.root.setNodewid(w);
-	    					System.out.println("ï¿½Ù²ï¿½ï¿½Æ® x ï¿½ï¿½ :"+myTree.root.getNodex());
-		    				System.out.println("ï¿½Ù²ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ :"+myTree.root.getNodeData());
+	    					System.out.println("¹Ù²ï·çÆ® x °ª :"+myTree.root.getNodex());
+		    				System.out.println("¹Ù²ï·çÆ® ³ëµå ÀÌ¸§ :"+myTree.root.getNodeData());
 	    				}*/
 	    				j++;
-	    				System.out.println("ï¿½Ù²ï¿½ x ï¿½ï¿½ :"+label.getNodex());
-	    				System.out.println("ï¿½Ù²ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ :"+label.getNodeData());
+	    				System.out.println("¹Ù²ï x °ª :"+label.getNodex());
+	    				System.out.println("¹Ù²ï ³ëµå ÀÌ¸§ :"+label.getNodeData());
 	    			}
-	    			int num = array.size();//textareaï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½
+	    			int num = array.size();//textareaÁý¾î ³Ö±â
 	    			JSONObject obj = (JSONObject)array.get(num-1);
 	    			String paneltext = (String)obj.get("textarea");
 	    			System.out.println(paneltext);
@@ -999,7 +1025,7 @@ public class SplitPanel extends JFrame{
 		String Node_Data = (String)obj.get("NodeData");
 		String MyLabel = (String)obj.get("MyLabel");
 		
-		label.setSize(w, h);/////////ï¿½Ì°Ç¶ï¿½ ï¿½ï¿½ï¿½ï¿½????
+		label.setSize(w, h);/////////ÀÌ°Ç¶Ç ¹¹°í????
 		label.setLocation(x, y);
 		label.setName(Node_Data);
 		label.setOpaque(true);
@@ -1014,10 +1040,10 @@ public class SplitPanel extends JFrame{
 		label.setBorder(new LineBorder(new Color(82, 130, 184), 2));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		panel_Mid.add(label);	//Label ï¿½ï¿½ï¿½Îµï¿½Ê¿ï¿½ ï¿½ß°ï¿½
+		panel_Mid.add(label);	//Label ¸¶ÀÎµå¸Ê¿¡ Ãß°¡
 		jLabel_nodes.add(label);
 		node_for_Labels.add(root);
-		//root.setmyLabel(label);//////////ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½???
+		root.setmyLabel(label);//////////ÀÌ°Ç ¹¹ÀÓ???
 		root.setNodewid(w);//myTree.root.getNodewid());
 		root.setNodehei(h);//myTree.root.getNodehei());
 		root.setNodex(x);//myTree.root.getNodex());
@@ -1028,17 +1054,17 @@ public class SplitPanel extends JFrame{
 		label.addMouseListener(nodeMouse);
 		label.addMouseMotionListener(nodeMouse);
        
-		// ï¿½Ú½ï¿½ ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´Ù¸ï¿½
+		// ÀÚ½Ä ³ëµå°¡ Á¸ÀçÇÑ´Ù¸é
 	    if(root.getLeftChild() != null)
 	    	draw_Tree2(root.getLeftChild(), i + 1, panel_Mid, array);
 	         
-	    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´Ù¸ï¿½
+	    // ÇüÁ¦ ³ëµå°¡ Á¸ÀçÇÑ´Ù¸é
 	    if(root.getRightSibling() != null)
 	    	draw_Tree2(root.getRightSibling(), i + 1, panel_Mid, array);
 	    	
 	   panel_Mid.repaint();
 	}
-	class SaveActionListener implements ActionListener{//save-ï¿½Þ´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ cï¿½ï¿½ï¿½ï¿½Ìºê¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	class SaveActionListener implements ActionListener{//save-¸Þ´º¹Ù ¸¸µé±â ¿¹Á¦·Î cµå¶óÀÌºê¿¡ »ý¼ºµÊ
 		private JFileChooser chooser;
 		public SaveActionListener() {
 			chooser = new JFileChooser();
@@ -1047,8 +1073,8 @@ public class SplitPanel extends JFrame{
 			JSONArray list = new JSONArray();
 			JSONObject jsonobject = new JSONObject();
 			JSONObject paneltext = new JSONObject();
-			paneltext.put("textarea", myDrawPanel.getText());//textareaï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½
-			     for(Node label : SplitPanel.node_for_Labels) {//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Úµï¿½
+			paneltext.put("textarea", myDrawPanel.getText());//textarea³»¿ë ÀÚÃ¼ ÀúÀåÄÚµå
+			     for(Node label : SplitPanel.node_for_Labels) {//¶óº§ Á¤º¸µéÀ» ÀúÀåÇÏ´Â ÄÚµå
 					JSONObject obj = new JSONObject();
 				    String numStr1 = String.valueOf(label.getNodex());
 			    	obj.put("x", numStr1);
@@ -1058,12 +1084,12 @@ public class SplitPanel extends JFrame{
 			    	obj.put("h", numStr3);
 			    	String numStr4 = String.valueOf(label.getNodewid());
 			    	obj.put("w", numStr4);
-			    	//String numStr5 = String.valueOf(label.getIndex());
-			    	//obj.put("index", numStr5);
+			    	String numStr5 = String.valueOf(label.getIndex());
+			    	obj.put("index", numStr5);
 			    	String numStr7 = String.valueOf(label.getLeftChild());
 			    	obj.put("LChil", numStr7);
-			    	//String numStr8 = String.valueOf(label.getmyLabel());
-			    	//obj.put("MyLabel", numStr8);
+			    	String numStr8 = String.valueOf(label.getmyLabel());
+			    	obj.put("MyLabel", numStr8);
 			    	String numStr9 = String.valueOf(label.getNodecolor());
 			    	obj.put("Color", numStr9);
 			    	String numStr10 = String.valueOf(label.getNodeData());
@@ -1077,7 +1103,7 @@ public class SplitPanel extends JFrame{
 			     	list.add(paneltext);
 			    	jsonobject.put("MyLabel", list);
 			try {
-				FileWriter file = new FileWriter("C:\\Users\\There\\Desktop\\ï¿½Þ´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.json");
+				FileWriter file = new FileWriter("C:\\Users\\There\\Desktop\\¸Þ´º¹Ù ¸¸µé±â ¿¹Á¦.json");
 				file.write(list.toJSONString());
 				file.flush();
 				file.close();
@@ -1090,7 +1116,7 @@ public class SplitPanel extends JFrame{
 	}
 	
 	
-	class SaveAsActionListener implements ActionListener {//saveas ï¿½ï¿½ï¿½ï¿½
+	class SaveAsActionListener implements ActionListener {//saveas ÀúÀå
 		private JFileChooser chooser;
 		public SaveAsActionListener() {
 			chooser = new JFileChooser();
@@ -1103,15 +1129,15 @@ public class SplitPanel extends JFrame{
 			chooser.setDialogTitle("Specify a file to save");   
 
 			int userSelection = chooser.showSaveDialog(parentFrame);
-			String pathName = chooser.getSelectedFile().getPath();//Å¬ï¿½ï¿½ï¿½Ñ°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			String pathName = chooser.getSelectedFile().getPath();//Å¬¸¯ÇÑ°Í °æ·ÎÀúÀå
 			if (userSelection == chooser.APPROVE_OPTION) {
 			    File fileToSave = chooser.getSelectedFile();
-			    System.out.println("Save as file: " + fileToSave.getAbsolutePath());//Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+			    System.out.println("Save as file: " + fileToSave.getAbsolutePath());//Å¬¶ôÇÑ °æ·Î
 			    JSONObject jsonobject = new JSONObject();
 			    JSONArray list = new JSONArray();
 			    JSONObject paneltext = new JSONObject();
-				paneltext.put("textarea", myDrawPanel.getText());//textareaï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½
-			     for(Node label : SplitPanel.node_for_Labels) {//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Úµï¿½
+				paneltext.put("textarea", myDrawPanel.getText());//textarea³»¿ë ÀÚÃ¼ ÀúÀåÄÚµå
+			     for(Node label : SplitPanel.node_for_Labels) {//¶óº§ Á¤º¸µéÀ» ÀúÀåÇÏ´Â ÄÚµå
 					JSONObject obj = new JSONObject();
 				    String numStr1 = String.valueOf(label.getNodex());
 			    	obj.put("x", numStr1);
@@ -1121,12 +1147,12 @@ public class SplitPanel extends JFrame{
 			    	obj.put("h", numStr3);
 			    	String numStr4 = String.valueOf(label.getNodewid());
 			    	obj.put("w", numStr4);
-			    	//String numStr5 = String.valueOf(label.getIndex());
-			    	//obj.put("index", numStr5);
+			    	String numStr5 = String.valueOf(label.getIndex());
+			    	obj.put("index", numStr5);
 			    	String numStr7 = String.valueOf(label.getLeftChild());
 			    	obj.put("LChil", numStr7);
-			    	//String numStr8 = String.valueOf(label.getmyLabel());
-			    	//obj.put("MyLabel", numStr8);
+			    	String numStr8 = String.valueOf(label.getmyLabel());
+			    	obj.put("MyLabel", numStr8);
 			    	String numStr9 = String.valueOf(label.getNodecolor());
 			    	obj.put("Color", numStr9);
 			    	String numStr10 = String.valueOf(label.getNodeData());
@@ -1141,7 +1167,7 @@ public class SplitPanel extends JFrame{
 			    	jsonobject.put("MyLabel", list);
 
 		     try {
-		      FileWriter file = new FileWriter(fileToSave+".json");//ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+		      FileWriter file = new FileWriter(fileToSave+".json");//ÀÌ¸§ ÀúÀå
 		      	file.write(list.toJSONString());
 		   		file.flush();
 		  		file.close();
