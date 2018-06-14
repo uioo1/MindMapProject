@@ -1,6 +1,7 @@
 package project;
 
 import java.awt.*;
+
 import java.awt.color.*;
 
 import java.awt.List;
@@ -26,8 +27,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import jdk.jfr.Unsigned;
 
 import org.json.simple.*;
 
@@ -241,8 +240,9 @@ public class SplitPanel extends JFrame{
 	public void relocating_tree(Node this_node) {
 		Node now_Node = this_node;
 		Node temp_Node = null;
+		Node parent_count_Node = null;
 		int sibling_count = 0;
-		double distance = 150;
+		double distance = 200;
 		
 		if(now_Node == myTree.root) {
 			jLabel_nodes.get(node_for_Labels.indexOf(now_Node)).setLocation(panel_Mid.getWidth()/ 2 - jLabel_nodes.get(0).getWidth()/2, panel_Mid.getHeight()/2 - jLabel_nodes.get(0).getHeight()/2);
@@ -260,7 +260,20 @@ public class SplitPanel extends JFrame{
 					temp_Node = temp_Node.getRightSibling();
 				}
 				temp_Node = now_Node.getLeftChild();			 
-
+				
+				int parent_count = 0;
+				parent_count_Node = temp_Node;
+				while(parent_count_Node.getParent() != null) {
+					parent_count_Node = parent_count_Node.getParent();
+					parent_count++;
+				}
+				
+				if(distance- 50*parent_count > 0) {
+					distance = distance - 50*parent_count;
+				}
+				else
+					distance = 25;
+				
 				for(int i = 0; i < sibling_count; i++) {
 					double radius = 2 * Math.PI / sibling_count;
 					temp_Node.setNodex(now_Node.getNodex() + (int)(distance*Math.sin(radius * i)));
@@ -269,10 +282,11 @@ public class SplitPanel extends JFrame{
 					temp_Node = temp_Node.getRightSibling();
 				}
 				temp_Node = now_Node.getLeftChild();
+				distance = 200;
 			
 				/////여기까지는 루트의 자식들 다 출력
-				if(distance-20 > 0)
-					distance = distance - 20;
+				
+				
 				sibling_count = 0;
 				now_Node = now_Node.getLeftChild();
 			}
@@ -319,7 +333,8 @@ public class SplitPanel extends JFrame{
 		JPanel mid_panel;
 		Node myNode;
 		int before_x, before_y;
-		boolean isMoved = false;
+		int before_wid, before_hei, before_label_x, before_label_y;
+		boolean isNorth = false, isWest = false, isSouth = false, isEast = false, isNW = false, isNE = false, isSW = false, isSE = false;
 		 
 		public NodeMouseListener(JLabel label, JPanel panel) {
 			this.label = label;
@@ -328,61 +343,115 @@ public class SplitPanel extends JFrame{
 			myNode = node_for_Labels.get(i);
 		}
 		
+		public void false_compass() {
+			isNorth = false; isWest = false; isSouth = false; isEast = false; isNW = false; isNE = false; isSW = false; isSE = false;
+		}
+		
+		public boolean is_false_compass() {
+			if(isNorth == false && isWest == false && isSouth == false && isEast == false && isNW == false && isNE == false && isSW == false && isSE == false)
+				return true;
+			else
+				return false;
+		}
+		
 		public void mouseDragged(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
 			int label_x = label.getX();
 			int label_y = label.getY();
 			
-			//System.out.println("Cursor: " + label.getCursor());
-			//System.out.println(label.getCursor() + getCursorType((Cursor.E_RESIZE_CURSOR));
-			if(label.getCursor().equals(Cursor.HAND_CURSOR)) {
-				System.out.println("으앙");
-				//label.setSize(label.getWidth() + x-before_x, label.getHeight());
-				label.setBounds(label.getX(), label.getY(), label.getWidth() + x-before_x, label.getHeight());
-				myNode.setNodewid(label.getWidth() + x-before_x);
-			}
-			else if(label.getCursor().equals(Cursor.E_RESIZE_CURSOR)) {
-				;
-			}
+			//System.out.println("beforex : " + before_x + " x : " + x);
 			
-			
-			myNode.setNodex(label_x + x - before_x);
-			myNode.setNodey(label_y + y - before_y);
-			node_xfield.setText(Integer.toString(label_x + x - before_x));			
-			node_yfield.setText(Integer.toString(label_y + y - before_y));			
-			label.setLocation(label_x + x - before_x, label_y + y - before_y);
-			
-			if(before_click_label == null) {	//맨처음
+			if(isEast == true) {
+				//System.out.println(before_wid + x-before_x + " " + before_hei);
+				if(before_wid - before_x >= x) {
+					x = -(before_wid - before_x) + 15;
+				}
+				label.setBounds(label.getX(), label.getY(), before_wid + x-before_x, before_hei);
+				node_xfield.setText(Integer.toString(label_x));			
+				node_yfield.setText(Integer.toString(label_y));		
+				node_widfield.setText(Integer.toString(before_wid + x-before_x));
+				node_heifield.setText(Integer.toString(before_hei));
+				myNode.setNodex(label_x);
+				myNode.setNodey(label_y);
+				myNode.setNodewid(before_wid + x-before_x);
+				myNode.setNodehei(before_hei);
 				removing_now_resize_label();
-				locating_resize_label(label_x + x - before_x, label_y + y - before_y);
-				isReversed = true;
+				locating_resize_label(label_x, label_y);
 			}
-			else if(isReversed == false) {
-				if(before_click_label == label) {
-					removing_now_resize_label();
-					locating_resize_label(label_x + x - before_x, label_y + y - before_y);
-					isReversed = true;
+			else if(isSouth == true) {
+				if(before_hei -before_y >= y) {
+					y = -(before_hei -before_y) + 15;
 				}
-				else {
-					removing_now_resize_label();
-					locating_resize_label(label_x + x - before_x, label_y + y - before_y);
-					isReversed = true;
-				}
+				label.setBounds(label.getX(), label.getY(), before_wid, before_hei + y-before_y);
+				node_xfield.setText(Integer.toString(label_x));			
+				node_yfield.setText(Integer.toString(label_y));		
+				node_widfield.setText(Integer.toString(before_wid));
+				node_heifield.setText(Integer.toString(before_hei + y-before_y));
+				myNode.setNodex(label_x);
+				myNode.setNodey(label_y);
+				myNode.setNodewid(before_wid);
+				myNode.setNodehei(before_hei + y-before_y);
+				removing_now_resize_label();
+				locating_resize_label(label_x, label_y);
 			}
-			else if(isReversed == true) {
-				if(before_click_label == label) {
+			else if(isWest == true) {
+				System.out.println(before_wid + (-x)+before_x + " " + before_hei);
+				if(before_wid + before_x <= x) {
+					x = -(before_wid + before_x) + 15;
+				}
+				label.setBounds(label.getX(), label.getY(), before_wid + (-x)+before_x, before_hei);
+				label.setLocation(before_label_x - (-x)+before_x, before_label_y);
+				node_xfield.setText(Integer.toString(before_label_x - (-x)+before_x));			
+				node_yfield.setText(Integer.toString(label_y));		
+				node_widfield.setText(Integer.toString(before_wid + (-x)+before_x));
+				node_heifield.setText(Integer.toString(before_hei));
+				myNode.setNodex(before_label_x - (-x)+before_x);
+				myNode.setNodey(label_y);
+				myNode.setNodewid(before_wid + (-x)+before_x);
+				myNode.setNodehei(before_hei);
+				removing_now_resize_label();
+				locating_resize_label(label_x, label_y);
+			}
+			else {
+				myNode.setNodex(label_x + x - before_x);
+				myNode.setNodey(label_y + y - before_y);
+				node_xfield.setText(Integer.toString(label_x + x - before_x));			
+				node_yfield.setText(Integer.toString(label_y + y - before_y));			
+				label.setLocation(label_x + x - before_x, label_y + y - before_y);
+			
+				if(before_click_label == null) {	//맨처음
 					removing_now_resize_label();
 					locating_resize_label(label_x + x - before_x, label_y + y - before_y);
 					isReversed = true;
 				}
-				else {
-					removing_now_resize_label();
-					locating_resize_label(label_x + x - before_x, label_y + y - before_y);
-					isReversed = true;
+				else if(isReversed == false) {
+					if(before_click_label == label) {
+						removing_now_resize_label();
+						locating_resize_label(label_x + x - before_x, label_y + y - before_y);
+						isReversed = true;
+					}
+					else {
+						removing_now_resize_label();
+						locating_resize_label(label_x + x - before_x, label_y + y - before_y);
+						isReversed = true;
+					}
+				}
+				else if(isReversed == true) {
+					if(before_click_label == label) {
+						removing_now_resize_label();
+						locating_resize_label(label_x + x - before_x, label_y + y - before_y);
+						isReversed = true;
+					}
+					else {
+						removing_now_resize_label();
+						locating_resize_label(label_x + x - before_x, label_y + y - before_y);
+						isReversed = true;
+					}
 				}
 			}
 			
+			//false_compass();
 			painting_line();
 			isDragged = true;
 		}
@@ -390,35 +459,58 @@ public class SplitPanel extends JFrame{
 		public void mouseMoved(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
+			int setArea = 5;
 			int node_wid = myNode.getNodewid();
+			before_wid = myNode.getNodewid();
 			int node_hei = myNode.getNodehei();
+			before_hei = myNode.getNodehei();
+			before_label_x = myNode.getNodex();
+			before_label_y = myNode.getNodey();
 			
-			if(x >= 0 && x <= 3 && y >= 0 && y <= 3) {
+			if(x >= 0 && x <= setArea && y >= 0 && y <= setArea) {
 				label.setCursor(new Cursor(Cursor.NW_RESIZE_CURSOR));
+				false_compass();
+				isNW = true;
 			}
-			else if(x <= node_wid && x >= node_wid-3 && y >= 0 && y <= 3) {
+			else if(x <= node_wid && x >= node_wid-setArea && y >= 0 && y <= setArea) {
 				label.setCursor(new Cursor(Cursor.NE_RESIZE_CURSOR));
+				false_compass();
+				isNE = true;
 			}
-			else if(x >= 0 && x <= 3 && y <= node_hei && y >= node_hei-3) {
+			else if(x >= 0 && x <= setArea && y <= node_hei && y >= node_hei-setArea) {
 				label.setCursor(new Cursor(Cursor.SW_RESIZE_CURSOR));
+				false_compass();
+				isSW = true;
 			}
-			else if(x <= node_wid && x >= node_wid-3 && y <= node_hei && y >= node_hei-3) {
+			else if(x <= node_wid && x >= node_wid-setArea && y <= node_hei && y >= node_hei-setArea) {
 				label.setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
+				false_compass();
+				isSE = true;
 			}
-			else if(x >= 0 && x <= 3) {
+			else if(x >= 0 && x <= setArea) {
 				label.setCursor(new Cursor(Cursor.W_RESIZE_CURSOR));
+				false_compass();
+				isWest = true;
 			}
-			else if(x <= node_wid && x >= node_wid-3) {
+			else if(x <= node_wid && x >= node_wid-setArea) {
 				label.setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
+				false_compass();
+				isEast = true;
 			}
-			else if(y >= 0 && y <= 3) {
+			else if(y >= 0 && y <= setArea) {
 				label.setCursor(new Cursor(Cursor.N_RESIZE_CURSOR));
+				false_compass();
+				isNorth = true;
 			}
-			else if(y <= node_hei && y >= node_hei-3) {
+			else if(y <= node_hei && y >= node_hei-setArea) {
 				label.setCursor(new Cursor(Cursor.S_RESIZE_CURSOR));
+				false_compass();
+				isSouth = true;				
 			}
-			else
+			else {
 				label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				false_compass();
+			}
 		}
 
 		public void mouseClicked(MouseEvent e) {
@@ -432,14 +524,12 @@ public class SplitPanel extends JFrame{
 		}
 
 		public void mousePressed(MouseEvent e) {
-			painting_line();
 			before_x = e.getX();
 			before_y = e.getY();
 			int red = myNode.getNodecolor().getRed();
 			int green = myNode.getNodecolor().getGreen();
 			int blue = myNode.getNodecolor().getBlue();
 			String redVal, greenVal, blueVal;
-			
 			
 			
 			if(red < 16)
@@ -456,13 +546,11 @@ public class SplitPanel extends JFrame{
 				blueVal = 0 + Long.toHexString(blue);
 			else
 				blueVal = Long.toHexString(blue);
-			
-			
+				
 			node_textfield.setText(myNode.getNodeData());
 			node_widfield.setText(Integer.toString(myNode.getNodewid()));
 			node_heifield.setText(Integer.toString(myNode.getNodehei()));
-			node_colorfield.setText(redVal + greenVal + blueVal);
-					
+			node_colorfield.setText(redVal + greenVal + blueVal);			
 			
 			locating_resize_label(myNode.getNodex(), myNode.getNodey());
 			
@@ -489,7 +577,7 @@ public class SplitPanel extends JFrame{
 				}
 			}			
 			
-			//painting_resize_box();
+
 		}
 
 		public void mouseReleased(MouseEvent e) {
@@ -504,10 +592,19 @@ public class SplitPanel extends JFrame{
 			if(real_y < 0)
 				real_y = 0;
 			
-			myNode.setNodex(real_x);
-			myNode.setNodey(label_y + (now_y - before_y));
-			node_xfield.setText(Integer.toString(real_x));			
-			node_yfield.setText(Integer.toString(real_y));
+			if(is_false_compass() == false) {
+				removing_before_resize_label();
+				removing_now_resize_label();
+				locating_resize_label(label.getX(), label.getY());
+				
+				before_wid = label.getWidth();
+				before_hei = label.getHeight();
+			}
+			else {
+				myNode.setNodex(real_x);
+				myNode.setNodey(label_y + (now_y - before_y));
+				node_xfield.setText(Integer.toString(real_x));			
+				node_yfield.setText(Integer.toString(real_y));
 			
 			label.setLocation(real_x, real_y);
 			
@@ -532,32 +629,33 @@ public class SplitPanel extends JFrame{
 					else {
 						removing_now_resize_label();
 						locating_resize_label(real_x, real_y);
-						isReversed = true;
+							isReversed = true;
+						}
 					}
 				}
-			}
-			else if(isReversed == true) {
-				if(before_click_label == label) {
-					if(isDragged == false) {
-						reversing_node();
-						removing_now_resize_label();
-						isReversed = false;
+				else if(isReversed == true) {
+					if(before_click_label == label) {
+						if(isDragged == false) {
+							reversing_node();
+							removing_now_resize_label();
+							isReversed = false;
+						}
+						else {
+							removing_now_resize_label();
+							locating_resize_label(real_x, real_y);
+							isReversed = true;
+						}
 					}
 					else {
-						removing_now_resize_label();
-						locating_resize_label(real_x, real_y);
-						isReversed = true;
+						if(isDragged == false) {
+							isReversed = true;
+						}
+						else {
+							removing_now_resize_label();
+							locating_resize_label(real_x, real_y);
+							isReversed = true;
+						}					
 					}
-				}
-				else {
-					if(isDragged == false) {
-						isReversed = true;
-					}
-					else {
-						removing_now_resize_label();
-						locating_resize_label(real_x, real_y);
-						isReversed = true;
-					}					
 				}
 			}
 			
@@ -567,7 +665,8 @@ public class SplitPanel extends JFrame{
 			for(int i = 0; i < resize_label.length; i++) {
 				before_resize_label[i] = resize_label[i];
 			}			
-			before_click_label = label;	
+			before_click_label = label;
+			
 			isDragged = false;
 		}
 		
@@ -691,10 +790,6 @@ public class SplitPanel extends JFrame{
 		}
 	}
 	
-	public void update(Graphics g) {
-		paint(g);
-	}
-	
 	ActionListener TextPanelActionListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			myTree = new Tree();
@@ -742,6 +837,22 @@ public class SplitPanel extends JFrame{
 				}
 			}
 			
+		}
+	};
+	
+	ActionListener NewcreateListener = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			myTree = new Tree();
+			myDrawPanel.setText("");
+			panel_Mid.removeAll();
+			panel_Mid.revalidate();
+			panel_Mid.repaint();
+			jLabel_nodes.clear();
+			node_for_Labels.clear();
+			panel_Mid.repaint();
+			before_click_label = null;	
+			isReversed = false;
+			isDragged = false;
 		}
 	};
 	
@@ -799,6 +910,7 @@ public class SplitPanel extends JFrame{
 	        JMenuItem JMenu_Apply = new JMenuItem("Apply"); 
 	        JMenuItem JMenu_Change = new JMenuItem("Change"); 
 
+	        JMenu_New.addActionListener(NewcreateListener);
 	        JMenu_Open.addActionListener(new OpenActionListener());
 	        JMenu_SaveAs.addActionListener(new SaveAsActionListener());
 	        JMenu_Save.addActionListener(new SaveActionListener());
@@ -834,6 +946,7 @@ public class SplitPanel extends JFrame{
 		     tool.setBackground(Color.gray);
 		     JButton newbtn = new JButton("새로 만들기");
 		     tool.add(newbtn);
+		     newbtn.addActionListener(NewcreateListener);
 		     newbtn.setToolTipText("마인드 맵 파일을 새로 생성합니다");
 		     tool.addSeparator();
 		     JButton openbtn = new JButton("열기");
